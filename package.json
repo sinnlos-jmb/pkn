@@ -1,0 +1,18 @@
+{
+  "name": "pkn",
+  "version": "1.0.0",
+  "description": "sm de gestion pkn plantines en vivero",
+  "main": "app_pkn.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app_pkn.js"
+  },
+  "author": "jmb",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "mariadb": "^3.3.2"
+  }
+}
