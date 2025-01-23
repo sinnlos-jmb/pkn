@@ -1,4 +1,16 @@
 
+==
+recibo esto de cambiar stock de a uno desde el tablero... falta insertar en Movimientos_stock también cuando doy de alta orden o edito.
+
+location.href="abm?
+op=estado_q&
+op2=edit_stock&
+v_plantin=2&
+op3=more_s&  //more_s, more_r, less_s, less_r
+k_plantines="+val+"";
+
+
+=
 console.error, console.warn
 localStorage.setItem("testJSON", myJSON);
 let text = localStorage.getItem("testJSON");
@@ -10,7 +22,7 @@ let text = localStorage.getItem("testJSON");
 
 
 . 
-grid de stocks estaba adentro de ordenes cerradas
+Ok. grid de stocks estaba adentro de ordenes cerradas
 
 
 mejor py es bot ia en WP, bot terapeuta, bots-compañeros en grupos, etc.
@@ -46,7 +58,7 @@ Be honest about your answers. You may even ask the people closest to you about t
 . indices en cada funcion del tablero accesible por anchor ¿con dropdown? en tablero para que sea muy single-page app...
 . agregar datos de agente y opcion para permitir al user editar SUS datos...podría desaparecer el menu de funciones y quedar solo home (drop down) y tablero.
 
-. Agregar movimientos de stock e informes con pdfs (mejor con ia).
+. Agregar informes con pdfs (mejor con ia).
 
 . validaciones y confirmaciones
 

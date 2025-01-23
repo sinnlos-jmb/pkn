@@ -415,13 +415,16 @@ app.get('/abm', async function (req, res) {
 			}
 
 			else if (op2 == "edit_stock") {
-				sql = "update Nogales set ", sql2 = "";
+				sql = "update Nogales set ";
+				let alta_baja="A";
 				if (op3 == "more_s") { sql += "stock=stock+"; }
-				else if (op3 == "less_s") { sql += "stock=stock-"; }
+				else if (op3 == "less_s") { sql += "stock=stock-"; alta_baja="B";}
 				else if (op3 == "more_r") { sql += "reserva=reserva+"; }
-				else if (op3 == "less_r") { sql += "reserva=reserva-"; }
+				else if (op3 == "less_r") { sql += "reserva=reserva-"; alta_baja="B";}
 				sql += orden.k_plantines + " where id_variedad=" + orden.v_plantin
+				sql2 = "insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad) values ("+req.session.agente.id+", '"+alta_baja+"', "+orden.v_plantin+", "+orden.k_plantines+")";
 				}
+				
 			
 
 			try {
@@ -522,7 +525,7 @@ app.get('/tablero', async function (req, res) {
 						"</div> <!--cierro grid_publicaciones de stocks--> </div> <!--cierro grid_publicaciones_offset-->\n" +
 						"<br>\n<br><h2>Movimientos stock</h2>" +
 						"<div class='grid_publicaciones_offset'><div class='publicaciones'>"+
-						"<div>mov1</div><div>mov2</div><div>mov3</div><div>mov4</div>"+
+						"<div>mov1</div><div>mov2</div><div>mov3</div><div>mov4</div><div style='border:2px solid chocolate;'><table width='100%'><tr><td>fede</td><td>mahan: 5</td><td>22/01/2025</td></tr></table></div><div style='border:2px solid green;'>mov6</div>"+
 						"</div> <!--cierro grid_publicaciones de movs--> </div> <!--cierro grid_publicaciones_offset-->\n" +
 						"</div></div> " +
 						"</article>"+
