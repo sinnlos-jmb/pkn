@@ -1,6 +1,6 @@
 
 ==
-recibo esto de cambiar stock de a uno desde el tablero... falta insertar en Movimientos_stock también cuando doy de alta orden o edito.
+recibo esto de cambiar stock de a uno desde el tablero (faltaria campo comentario (dropdown))... falta insertar en Movimientos_stock también cuando doy de alta orden o edito.
 
 location.href="abm?
 op=estado_q&
@@ -8,6 +8,15 @@ op2=edit_stock&
 v_plantin=2&
 op3=more_s&  //more_s, more_r, less_s, less_r
 k_plantines="+val+"";
+
+
+..
+editar orden:
+<input type='submit' value='Guardar' class='btn1 s_hov' " +
+        "onclick='document.getElementById(\"btn_calc\").click(); let rta=\"\"; ";
+    if (p_op == 'new_q') { rta += "for (let j=1, input_j; j<vec_detalles.length; j++) {input_j=document.getElementById(j); if (input_j.value!=\"0\") {rta+=j+\"-\"+input_j.value+\"|\";} } "; }
+    else if (p_op == 'update_q') { rta += "for (let j=1, input_j, sum; j<vec_detalles.length; j++) {input_j=document.getElementById(j); if (vec_detalles[j]!=\"0\" || input_j.value!=\"0\") {sum=parseInt(input_j.value)+vec_detalles[j]; rta+=j+\"-\"+sum+\"-\"+vec_detalles[j]+\"|\";} } "; }
+    rta += "document.getElementById(\"detalle\").value=rta;'>
 
 
 =
@@ -55,7 +64,7 @@ Be honest about your answers. You may even ask the people closest to you about t
 . repasar y post en vez de get para que no se vean los params.
 . nuevo campo observaciones en los agentes (solo accesible a admins)
 
-. indices en cada funcion del tablero accesible por anchor ¿con dropdown? en tablero para que sea muy single-page app...
+. indices a cada funcion en el tablero accesible por anchor en dropdown del tablero para que sea muy single-page app...
 . agregar datos de agente y opcion para permitir al user editar SUS datos...podría desaparecer el menu de funciones y quedar solo home (drop down) y tablero.
 
 . Agregar informes con pdfs (mejor con ia).

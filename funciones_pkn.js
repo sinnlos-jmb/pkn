@@ -140,7 +140,7 @@ const clases = require("./class_ubicaciones");
 					//"function prn () {alert(id_orden+',index: '+index+', '+document.getElementById('cerrar_vendedor').value+', '+document.getElementById('cerrar_monto').value);}</script>\n"+
 					"function prn (indice, op2) {let opp2='c', vec_div=document.getElementById('closing'+indice).children; if (op2==1) {opp2='x'; vec_ordenes[indice].cerrar_monto=0; vec_ordenes[indice].cerrar_vendedor="+p_params.agente.id+"; vec_ordenes[indice].cerrar_observaciones=vec_div[1].value;} else {vec_ordenes[indice].cerrar_monto=vec_div[1].value; vec_ordenes[indice].cerrar_vendedor=vec_div[4].value; vec_ordenes[indice].cerrar_observaciones=vec_div[7].value;} let msg='/abm?op=estado_q&op2='+opp2+'&id_orden='+vec_ordenes[indice].id+'&cerrar_monto='+vec_ordenes[indice].cerrar_monto+'&cerrar_vendedor='+vec_ordenes[indice].cerrar_vendedor+'&cerrar_observaciones='+vec_ordenes[indice].cerrar_observaciones+'&detalle='+vec_ordenes[indice].detail; location.href=msg;}\n"+
 					"</script>\n"+
-					"<table style='width:100%;'><tbody><tr><td>Ordenes abiertas:</td><td></td><td style='text-align:end;'>"+
+					"<table style='width:100%;' id='ordenes_a'><tbody><tr><td>Ordenes abiertas:</td><td></td><td style='text-align:end;'>"+
 					"<select id='s_filtros1' onchange='location.href=this.value;' style='border: 2px solid teal; border-radius: 8px;'><option value='"+clases.Agente.getLinksAgente('tablero?op=ok', p_params.agente_logged)+"'";
 	if (p_params.op=='all'){rta+=" selected";}
 	rta+=">mostrar todas las ordenes</option><option value='"+clases.Agente.getLinksAgente('tablero?op=ok&op2=data_vendedor', p_params.agente_logged)+"'";
@@ -205,7 +205,7 @@ const clases = require("./class_ubicaciones");
 			else if (rows[i].estado_orden=='C') {
 				if (first_closed) {
 					first_closed=false;
-					rta+="</div> <div class='offset'>";
+					rta+="</div> <div class='offset' id='ordenes_c'>";
 					let temp="";
 					if (offset.abiertas>0) {rta+="<a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_abiertas="+(+offset.abiertas-1), p_params.agente)+"'>anterior</a> - ";}
 					rta+="offset: "+offset.abiertas;

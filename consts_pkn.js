@@ -157,7 +157,7 @@ function get_connection() {
 async function pkn_engage() {
     const grids_main = { //funciones: getHeader, getArticle(params)... organizar tipo pipeline
         header: "<header id='pageHeader'><div class='banner'><table style='table-layout: fixed; width:100%; height:80px;'><tr><td width='2px' height='2px'></td><td width='75px'></td><td></td></tr><tr><td></td>" +
-            "<td class='logo'>PKN</td><td></td></tr><tr><td height='20px'></td><td></td><td></td></tr></table></div> <div class='login'>",
+            "<td class='logo'>PKN</td><td></td></tr><tr><td height='20px'></td><td></td><td></td></tr></table></div> <div class='login' id='ordenes_abiertas'>", //id para anchor
         article: "</header><article id='mainArticle'>",
         nav: "</article><nav id='mainNav'>",
         stocks: "</nav><div id='stocks'> ",
@@ -175,8 +175,8 @@ async function pkn_engage() {
         nav_bar = { home: "<li><a href='/'>Home</a></li>\n", mitablero: "" },
         pag_error = head + "</head><body><h1>Ha ocurrido un error y estamos trabajando en ello!</h1><br><br><p>",
         f_admins = "\n\n<li class='dropdown'> <a href='javascript:void(0)' class='dropbtn'>Funciones</a> <div class='dropdown-content'> <a href='abm?op=na'>Nuevo agente</a> " +
-            " <a href='abm?op=nm'>Nuevo mercado</a> <a href='tablero?op=n_gril'>Nueva grilla</a> " +
-            "<a href='abm?op=nr'>Nuevos productos</a>  </div>  </li>" +
+            " <a href='#ordenes_a'>Ordenes abiertas</a> <a href='#ordenes_c'>Ordenes cerradas</a> <a href='#edit_stocks'>Editar stocks</a> <a href='#movimientos'>Movimientos</a> " +
+            "  </div>  </li>" +
             "<table class='t_buscador'><tbody> <tr><td class='td_find' style='width:125px'><input type='text' id='busca_agente' class='input_busca'></td> " +
             "<td class='td_find' style='width: 23px;'><a href='javascript:let sa=document.getElementById(\"busca_agente\").value; location=\"/tablero?op=sa&busca_agente=\"+sa+\"\"'> " +
             "<svg width='20px' height='20px' viewBox='0 0 24 24' style='vertical-align:top;'><path d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'></path></svg></a>" +

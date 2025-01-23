@@ -330,13 +330,15 @@ app.get('/abm', async function (req, res) {
 			sql1 = "delete from Detalle_orden where id_orden=" + orden.id;
 			sql2 = "insert into Detalle_orden (id_orden, id_variedad, cantidad_variedad) values ",
 			sql3 = "INSERT INTO Nogales (id_variedad, reserva) VALUES ";
+			let sql4="insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad, descripcion) values ";
 
 			let detalle = lib_c.splitDetalle(orden.detalle), vec_sql3_params=[];
 			for (let i = 1, prim = true; i < detalle.length; i++) {
 				if (detalle[i] !== "0") {
 					if (prim) { prim = false; }
-					else { sql2 += ", "; }
+					else { sql2 += ", "; sql4 += ", ";}
 					sql2 += "(" + orden.id + ", " + i + ", " + detalle[i].sum + ")";
+					sql4 += "("+req.session.agente.id+", 'A', 1, 2, '"+JSON.stringify(detalle[i])+"')";
 					if (detalle[i].reserva0 == "0") { vec_sql3_params.push( "(" + i + ", " + detalle[i].sum + ")" ); }
 					else if (detalle[i].reserva0 == detalle[i].sum) { }
 					else { vec_sql3_params.push( "(" + i + ", " + (parseInt(detalle[i].sum) - detalle[i].reserva0) + ")" ); }
@@ -353,7 +355,8 @@ app.get('/abm', async function (req, res) {
 
 				try {
 					const value = await lib.asyncDB_insert2(sql2, sql3);
-					let var_inutil = true;
+					let value2 = await lib.asyncDB_insert(sql4);
+					console.log("sql4: "+sql4+"\nreturn: "+ value2);
 					//console.log("new order\nsql: "+sql+"\nsql2: "+sql2+"\nsql3: "+sql3+"\nrta sql2: "+value.rta1+"\n rta sql3: "+value.rta2);
 					}
 				catch (error) { res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
@@ -513,7 +516,7 @@ app.get('/tablero', async function (req, res) {
 					}
 				rta +="<h2>Ordenes</h2>"+
 					"</header_flex><div id='publicArticle'>" +
-					value + "<br>\n<br><h2>Stock</h2>" +
+					value + "<br>\n<br><h2 id='edit_stocks'>Stock</h2>" +
 					"<div class='grid_publicaciones_offset'><div class='publicaciones'>";
 
 				try {
@@ -523,7 +526,7 @@ app.get('/tablero', async function (req, res) {
 					rta += lib_c.get_grid_stocks(vec_variedades) +
 	
 						"</div> <!--cierro grid_publicaciones de stocks--> </div> <!--cierro grid_publicaciones_offset-->\n" +
-						"<br>\n<br><h2>Movimientos stock</h2>" +
+						"<br>\n<br><h2 id='movimientos'>Movimientos stock</h2>" +
 						"<div class='grid_publicaciones_offset'><div class='publicaciones'>"+
 						"<div>mov1</div><div>mov2</div><div>mov3</div><div>mov4</div><div style='border:2px solid chocolate;'><table width='100%'><tr><td>fede</td><td>mahan: 5</td><td>22/01/2025</td></tr></table></div><div style='border:2px solid green;'>mov6</div>"+
 						"</div> <!--cierro grid_publicaciones de movs--> </div> <!--cierro grid_publicaciones_offset-->\n" +
