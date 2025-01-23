@@ -519,7 +519,11 @@ app.get('/tablero', async function (req, res) {
 	
 					rta += lib_c.get_grid_stocks(vec_variedades) +
 	
-						"</div> <!--cierro grid_publicaciones--> </div> <!--cierro grid_publicaciones_offset-->\n" +
+						"</div> <!--cierro grid_publicaciones de stocks--> </div> <!--cierro grid_publicaciones_offset-->\n" +
+						"<br>\n<br><h2>Movimientos stock</h2>" +
+						"<div class='grid_publicaciones_offset'><div class='publicaciones'>"+
+						"<div>mov1</div><div>mov2</div><div>mov3</div><div>mov4</div>"+
+						"</div> <!--cierro grid_publicaciones de movs--> </div> <!--cierro grid_publicaciones_offset-->\n" +
 						"</div></div> " +
 						"</article>"+
 						"<nav id='mainNav'>\n " +//grids_main.nav+
