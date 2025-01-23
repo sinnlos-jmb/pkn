@@ -1,0 +1,205 @@
+
+console.error, console.warn
+localStorage.setItem("testJSON", myJSON);
+let text = localStorage.getItem("testJSON");
+
+. omatsuri.app, html-css-js.com, cssgrid-generator front-end.
+
+. pert: herramienta de gestion (alejandro garcia)
+. docu: seminario II escandel (seminario I steimberg: metodologías)
+
+
+. 
+grid de stocks estaba adentro de ordenes cerradas
+
+
+mejor py es bot ia en WP, bot terapeuta, bots-compañeros en grupos, etc.
+.. tratamientos psicológicos-psiquiátricos.
+
+. el gran GRAN tema de filo en psico es el de highest good... psicoanalisis freudiano en linea con mdd en auge, dejó fuera casi toda referencia al bien, olvidemos el summum bonum.
+.. zelmira quiere llegar al summum bonum de un salto, como a rodas el general inexperto.
+.. propuesta fs clasica, aristotélica, propone que por nz felicidad consiste en realizar max-bien referido a la praxis (vida buena=>aretai_total=>estado etico).
+.. tt no es un yo entre otros yoes contra los cuales podría argumentar, es un foco energético de max-poder en el que confluyen la filosofía griega sintetizada, y la extensión cristiana añadiendo material de revelación...
+
+. bienes que se quiere realizar (jerarquia, personales y publicos), males a evitar, pasios dominantes, etc.
+. clarificar tipos de bienes, aspiraciones (summum bonum?), skills en accion participativa... colaborar en actividades (ergoi) cada vez más elevadas en la producción de bienes (que requieran mayor nro de personas intergeneracional, mucha comprensión, etc.).
+.. tomar consejos rápidos de los huberman (separar actividad en horas de distinta intensidad, tener una skill especial super afinada, ie, libros fáciles de hábitos de exitosos, etc., y vincularlos con fundamento filosófico).
+.. There's a great book by Malcolm Gladwell called “Outliers” where the author studied and interviews incredibly successful people to figure out why they became elite at their trade...  the “10,000 rule”: many of the elite performers in just about any industry put in at least 10,000 hours of work to improve at that one skill.
+
+- cuestionario ejemplo (roadmap de situacion psyche: pasios, aretai, identificación de bienes-males que configuran la comprensión de la vida como un todo, deseos qué bienes voy a luchar con un life-long commitment, proyección clara de etapas de vida y sistema de bienes asociados a cada una (más o menos probables, de mayor peso, y así), etc.):
+Ask yourself:
+    Do you dread workdays? Or do you look forward to them?
+    Do you find yourself thinking about other things when you're supposed to be working?
+    Do you enjoy what you are doing on a daily basis?
+    Is your work interesting to you?
+    Do you find yourself reading about your profession in your off hours trying to learn more?
+
+Be honest about your answers. You may even ask the people closest to you about these questions if you are unsure. An outside perspective can help.
+
+
+
+===
+
+. repasar y post en vez de get para que no se vean los params.
+. nuevo campo observaciones en los agentes (solo accesible a admins)
+
+. indices en cada funcion del tablero accesible por anchor ¿con dropdown? en tablero para que sea muy single-page app...
+. agregar datos de agente y opcion para permitir al user editar SUS datos...podría desaparecer el menu de funciones y quedar solo home (drop down) y tablero.
+
+. Agregar movimientos de stock e informes con pdfs (mejor con ia).
+
+. validaciones y confirmaciones
+
+. encriptar pwds
+
+
+. lo de los cinco días es cuando se hace presupuesto y cliente no confirma pagando la seña. Agregar ordenes con cinco días de creadas sin seña y ponerla al principio de los admins w-resaltada. Que el admin agregue cinco días o cancele la orden (no conviene automáticamente con un cron: todo lo que se excepcional choca con sistemas sencillos rápidos y baratos).
+
+. presupuestador? para proponer brique a clientes (y enviar por wp la propuesta). 
+.. probablemente lo mejor sea crear la orden sin seña cuando hay probabilidad de concretar, y solo presupuestar sin reservar stock en los otros casos.
+
+
+
+==
+const [error, result] ?= expression;
+
+if the expression executes normally without throwing an exception:
+    error will be assigned the value null
+    result will contain the return value of the expression
+
+if the expression throws an exception:
+    error will contain the thrown exception object
+    result will be assigned to null
+
+
+
+
+todo:
+- agregar nuevas variedades.
+.. dificil xq cambia tamaño de grid, b-hardcodeado...
+
+. registros de movimientos stock (ordenes y cambios por cancelar, cerrar-ok y modificaciones directas de stock), qué agente hizo cada movimiento.
+
+- ademas de filtros elegir ordenamiento
+. filtros: por cliente (cuit o nombre), vendedor, fecha (mes esp), orden_id.
+.. cambiar orden por fecha entrega, clientes, vendedores, monto total, etc
+.. pop-up para filtrar (todo blur menos pequeño box)
+.. agregar datos en primera card: cant de ordenes abiertas, la más proxima a vencer.
+
+- imagenes de pkn
+
+..etapa2
+- visión reducida de ordenes en tabla  (pre-informe pdf?).
+- agenda
+- integrar WP (ia?)
+
+reminder: tipos agente: 'A', 'a', 'v', 'U' o 'u'.
+
+
+==
+descartes
+
+. gran array de agentes en clase Agente (static): id_agente, nom_agente, cuit_agente.
+
+
+==
+https://www.turing.com/kb/building-middleware-for-node-js
+
+
+==
+st:
+
+home: sm de gestion pkn e imagen
+tablero 
+.. admin: ordenes abiertas (reserva por cinco días o falta entrega en vivero)-cerradas, fijo stock que se actualiza cada 10 segundos (api?), actividad vivero. Nueva orden y editar todo.
+.. viveristas: ordenes abiertas, agregar o remover plantines de cierta variedad a stock. Se remueven por muertes, ventas y compra actualiza solo.
+
+. grids: header, main (grid con filas), col stock (sticky), footer.
+
+. stocks con cards primera fija de stocks y las demás movimientos ingreso y salida.
+
+. agenda con las jornadas
+
+. reutilizar noticias, clima y otras features de buenosbriques
+
+--
+mi tablero: al principio filas con todas las features una bajo otra y que se pueda seleccionar para toda pantalla con esa feature (ordenes abiertas todas, ordenes cerradas de a 10 paginando, filtrar ordenes (fecha, cliente, monto) movimientos stock, agenda, agentes para que admins puedan editar).
+
+
+==
+
+
+stock
+.. variedad de nueces pecanes y cantidades
+
+. vivero, 
+.. encuentran las ordenes precargadas por admin para entregar (y preparar? avisar por WP?).
+.. también reciben plantas => deben registrar recibo para agregar a stock
+
+. clientes
+.. dbase por ahora, y eventualmente acceder con cuil para obtener documentación histórica (boletas, etc.).
+
+. admins
+.. generan ordenes
+
+. registros de operaciones en stock y movimientos
+
+. reserva cambia stock, dura cinco dias.
+.. reservas de vivero quedan pendientes (solicitud de reserva).
+
+. 6 usuarios (tres admins y tres viveristas)
+.. usuarios / clientes con reputacion para mas adelante que puedan acceder a stock y cargar pedidos (pendientes).
+
+
+
+..
+orden:
+
+. variedad de nueces (varias por orden)
+
+. campos: 
+.. valor_plantin (por ahora en archivo .env, pero ponerlo en card del tablero con todas las constantes de la app, editables): app.locals.objs_static.consts.valor_plantin
+.. cantidad_plantines
+.. id_comprador (cliente)
+.. id_vendedor (user logueado)
+.. con_iva
+.. fecha_entrega
+.. observaciones_orden
+.. estado_orden (A, C, X:cancelada)
+.. valor_orden ((cantidad por valor_plantin)*1.21, pero editable por si cambia algo extra aclarado en observaciones)
+
+
+const orden = {id:req.query.id_orden || '', id_agente: agente.id || '', k_plantines:req.query.k_plantines || '', nom_producto: req.query.nom_producto || '', cantidad:req.query.cantidad || '', precio:req.query.precio || '', 
+ 						fecha: req.query.fecha_publicacion || '', ubicacion: req.query.ubicacion || '', observaciones: req.query.observaciones || '', estado: req.query.estado || '', provincia: req.query.id_provincia || '', tipo_agente_p: req.query.tipo_agente_publicacion || '', valor_plantin: app.locals.objs_static.consts.valor_plantin};
+ 						
+ 						
+..
+	sql="update Ordenes set "+
+"id_producto="+publicacion.id_producto+", cantidad_producto='"+publicacion.cantidad+"', descripcion_publicacion='"+//STR_TO_DATE('"+publicacion.fecha+"', '%d/%m/%Y')
+publicacion.descripcion+"', precio_producto='"+publicacion.precio+"', id_ubicacion="+publicacion.ubicacion+", fecha_publicacion=STR_TO_DATE('"+publicacion.fecha+"', '%d/%m/%Y'), "+
+"tipo_publicacion='"+publicacion.tipo_publicacion+"', tipo_agente='"+publicacion.tipo_agente_p+"' "+
+" where id_publicacion="+publicacion.id;
+
+
+..
+localhost:3030/abm?op=edit_q&id_orden=7&v_plantin=15000&k_plantines=55&v_total=825000&
+cuit_comprador=10&id_vendedor=4&
+con_iva=0&fecha_entrega=16/10/2024&fecha_orden=11/10/2024&estado_orden=A&observaciones=%20 obs123249636509
+
+
+
+--
+"</header><article id='mainArticle'>\n"+//grids_main.article+
+"<div class='grid_main_public'>\n"+//grids_publics.start+
+" <header_flex id='publicHeaderFlex'>\n\n"+ //post_nav
+"<h2>Ordenes</h2>";
+rta+="</header_flex><article2 id='publicArticle'>"+
+value+
+"\n </div></article2></div>\n "+ //grids_public.end
+"</article><nav id='mainNav'>\n "+//grids_main.nav+
+"</nav><div id='stocks'>\n "+//grids_main.stocks+
+"</div><footer id='pageFooter'>Footer</footer>\n"+//grids_main.footer+
+" \n </body>\n</html>";
+
+
+
