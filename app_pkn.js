@@ -338,7 +338,7 @@ app.get('/abm', async function (req, res) {
 					if (prim) { prim = false; }
 					else { sql2 += ", "; sql4 += ", ";}
 					sql2 += "(" + orden.id + ", " + i + ", " + detalle[i].sum + ")";
-					sql4 += "("+req.session.agente.id+", 'A', 1, 2, '"+JSON.stringify(detalle[i])+"')";
+					sql4 += "("+req.session.agente.id+", 'A', "+detalle[i].id_variedad+", "+detalle[i].cant+", '"+JSON.stringify(detalle[i])+"')";
 					if (detalle[i].reserva0 == "0") { vec_sql3_params.push( "(" + i + ", " + detalle[i].sum + ")" ); }
 					else if (detalle[i].reserva0 == detalle[i].sum) { }
 					else { vec_sql3_params.push( "(" + i + ", " + (parseInt(detalle[i].sum) - detalle[i].reserva0) + ")" ); }
@@ -351,12 +351,13 @@ app.get('/abm', async function (req, res) {
 
 			//**/res.send("<html><body><p>editar orden</p><p>" + sql + "</p><p>sql1: " + sql1 + "</p><p>sql2: " + sql2 + "</p><p>sql3: " + sql3 + "</p><p>vec_detalle: "+detalle+"</p><p>" + orden.detalle + "</p><br><br>" + lib_c.get_links_agente("tablero?op=ok", req.session.agente) + "&new_public_id=??</body></html>");
 			try {
-				const value =lib.asyncDB_insert2(sql, sql1);
-
+				const value =await lib.asyncDB_insert2(sql, sql1);
+				console.log("execution sql y sql1: "+value.rta2);
 				try {
-					const value = await lib.asyncDB_insert2(sql2, sql3);
+					const value1 = await lib.asyncDB_insert2(sql2, sql3);
+					console.log("execution sql2 y sql3: "+value1.rta1);
 					let value2 = await lib.asyncDB_insert(sql4);
-					console.log("sql4: "+sql4+"\nreturn: "+ value2);
+					console.log("sql4: "+sql4+"\nsql2: "+sql2+"\nreturn: "+ value2);
 					//console.log("new order\nsql: "+sql+"\nsql2: "+sql2+"\nsql3: "+sql3+"\nrta sql2: "+value.rta1+"\n rta sql3: "+value.rta2);
 					}
 				catch (error) { res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
@@ -466,7 +467,7 @@ app.get('/tablero', async function (req, res) {
 			query: "select  o.id_orden, o.valor_plantin, o.cantidad_plantines, o.valor_orden, o.id_comprador, a.apellido_agente, a.cuit_agente, "+
 					"o.id_vendedor, o.con_iva, DATE_FORMAT(o.fecha_entrega, '%d/%m/%Y') fecha_entrega, "+
 					"DATE_FORMAT(o.fecha_orden, '%d/%m/%Y') fecha_orden, o.observaciones_orden, estado_orden, o.cierre_vendedor, o.cierre_monto, " +
-					"GROUP_CONCAT(CONCAT(do.id_variedad, '-', do.cantidad_variedad) SEPARATOR '|') as detalle, o.senia, o.observaciones_comerciales, "+
+					"GROUP_CONCAT(CONCAT(do.id_variedad, '_', do.cantidad_variedad) SEPARATOR '|') as detalle, o.senia, o.observaciones_comerciales, "+
 					"if (DATE_ADD(CURDATE() , INTERVAL 5 DAY)>=o.fecha_entrega and CURDATE() <= o.fecha_entrega, true, false) as por_vencer, if (CURDATE() > o.fecha_entrega, true, false) as vencida  " +
 				" from Ordenes o left join Detalle_orden do on  o.id_orden = do.id_orden, Agentes a "+
 				" where a.id_agente=o.id_comprador ", //limit 1000 o filtrar por año de generacion de ordenes para no traer un recordset gigangte
