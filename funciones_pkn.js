@@ -37,6 +37,26 @@ const clases = require("./class_ubicaciones");
    }
 
 
+   async function insert_blank(vec_param) { 
+	let rta=[], rta2="";
+	const conn = await lib_c.get_connection();
+
+	try {
+		for (let i=0; i<vec_param.length; i++){
+			const r=await conn.query(vec_param[i]);
+			rta[i]={query:vec_param[i], affectedRows:r.affectedRows.toString(), insertId:r.insertId.toString()};
+			//console.log("rta del query: "+Object.keys(rta[i]));
+			}
+		rta2=JSON.stringify(rta)||"error al stringify";
+		}
+	catch (err) {console.log("error en funcion insert_blank\n"+err);} 
+	finally { 
+		if (conn)  await conn.end();
+		return rta2;
+		}
+   }   
+
+
 // recibe objeto con operacion y query. Carga el objeto agente de la sesion, devuelve tabla html.
  async function asyncDB_getAgentes(p_params) {
     let conn, rta="<table>", agente=new clases.Agente(0, "", "", "", "", "", "", "", "", "", "", "");
@@ -262,4 +282,4 @@ const clases = require("./class_ubicaciones");
 
 
 
- module.exports = { asyncDB_getAgentes,  asyncDB_insert,  asyncDB_insert2, pkn_getNogales, pkn_getOrdenes};
+ module.exports = { asyncDB_getAgentes,  asyncDB_insert,  asyncDB_insert2, insert_blank, pkn_getNogales, pkn_getOrdenes};

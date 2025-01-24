@@ -123,9 +123,11 @@ function get_form_orden(p_op, orden) {  //new_q o update_q
         "<input type='hidden' id='op' name='op' value='" + p_op + "'><input type='hidden' id='id_orden' name='id_orden' value='" + orden.id + "'></td></tr>\n" +
         "<tr><td colspan='2' style='text-align:center; height:60px'> <input type='submit' value='Guardar' class='btn1 s_hov' " +
         "onclick='document.getElementById(\"btn_calc\").click(); let rta=\"\"; ";
-    if (p_op == 'new_q') { rta += "for (let j=1, input_j; j<vec_detalles.length; j++) {input_j=document.getElementById(j); if (input_j.value!=\"0\") {rta+=j+\"-\"+input_j.value+\"|\";} } "; }
+    if (p_op == 'new_q') { rta += "for (let j=1, input_j; j<vec_detalles.length; j++) {input_j=document.getElementById(j); if (input_j.value!=\"0\") {rta+=j+\"_\"+input_j.value+\"|\";} } "; }
     else if (p_op == 'update_q') { rta += "for (let j=1, input_j, sum; j<vec_detalles.length; j++) {input_j=document.getElementById(j); if (vec_detalles[j]!=\"0\" || input_j.value!=\"0\") {sum=parseInt(input_j.value)+vec_detalles[j]; rta+=j+\"_\"+sum+\"_\"+vec_detalles[j]+\"_\"+input_j.value+\"|\";} } "; }
-    rta += "document.getElementById(\"detalle\").value=rta; alert(rta);'> </td> \n</tr>\n</table>\n</form>\n<td class='td_form_cols'> </td>\n</tr>\n</table> \n\n";
+    rta += "document.getElementById(\"detalle\").value=rta; alert (rta);'> </td> \n</tr>\n"+
+            "</table>\n</form>\n<td class='td_form_cols'> </td>\n</tr>\n"+
+            "</table> \n\n";
     return rta;
 }
 

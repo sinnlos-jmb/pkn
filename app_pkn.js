@@ -257,33 +257,35 @@ app.get('/abm', async function (req, res) {
 				" Values (" + orden.id_vendedor + ", " + orden.k_plantines + ", " + orden.v_plantin + ", " + orden.v_total + ", '" + orden.observaciones + "', " + orden.id_comprador + ", STR_TO_DATE('" + orden.fecha_entrega + "', '%d/%m/%Y'), curdate(), '" + orden.estado + "', '" + orden.senia + "', '" + orden.observaciones_c + "', "+orden.con_iva+")";
 			let id_new_orden = 0, rta = "<html><head></head><body>",
 				sql2 = "insert into Detalle_orden (id_orden, id_variedad, cantidad_variedad) values ",
-				sql3 = "INSERT INTO Nogales (id_variedad, reserva) VALUES ";
-
+				sql3 = "INSERT INTO Nogales (id_variedad, reserva) VALUES ", 
+				sql4 = "insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad, descripcion) values ";
+			console.log("detalle que recibo: "+orden.detalle);
 			/*res.send("<html><body><p>falta eliminar detalle orden del orden id e insertar los nuevos</p><p>" + sql + "</p><p>" + sql2 + "</p><p>" + sql3 + "</p><p>" + orden.detalle + "</p><p>" + detalle + "</p><br><br>" + lib_c.get_links_agente("tablero?op=ok", req.session.agente) + "&new_public_id=??</body></html>");*/
 			try {
 				const value = await lib.asyncDB_insert(sql);
 				id_new_orden = value.insertId;
 				let detalle = lib_c.splitDetalle(orden.detalle);
+				console.log("sql1: "+sql+"\ndetalle: "+detalle);
 				for (let i = 1, prim = true; i < detalle.length; i++) {
 					if (detalle[i] != "0") {
 						if (prim) { prim = false; }
-						else { sql2 += ", "; sql3 += ", "; }
+						else { sql2 += ", "; sql3 += ", "; sql4 += ", "; }
 						sql2 += "(" + id_new_orden + ", " + i + ", " + detalle[i] + ")";
 						sql3 += "(" + i + ", " + detalle[i] + ")";
+						sql4 += "("+req.session.agente.id+", 'A', "+i+", "+detalle[i]+", 'nueva orden')";
 						}
 					}
 				sql3 += " ON DUPLICATE KEY UPDATE reserva =reserva+VALUES(reserva), nombre_variedad=nombre_variedad";
-
+				console.log("triple insert:\nsql2: "+sql2+"\nsql3: "+sql3+"\nsql4: "+sql4);
 				try {
-					const value = await lib.asyncDB_insert2(sql2, sql3);
-							let var_inutil = true;
-							//console.log("new order\nsql: "+sql+"\nsql2: "+sql2+"\nsql3: "+sql3+"\nrta sql2: "+value.rta1+"\n rta sql3: "+value.rta2);
-						}
-						catch (error) { res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
+					const value = await lib.insert_blank([sql2, sql3, sql4]);
+					console.log("triple insert rtas: "+value);
+					}
+				catch (error) { res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
 
 					res.redirect(clases.Agente.getLinksAgente("tablero?op=ok", req.session.agente) + "&new_orden_id=" + id_new_orden);
 				}
-				catch (error) { console.log("sql2: " + sql2); console.log("sql3: " + sql3); res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
+				catch (error) { console.log("sql2: " + sql2); console.log("sql3: " + sql3); console.log("sql4: " + sql4); res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
 
 			//res.redirect(lib_c.get_links_agente("tablero?op=ok", req.session.agente)+"&new_public_id="+value.insertId);
 

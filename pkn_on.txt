@@ -1,6 +1,7 @@
 
 ==
-recibo esto de cambiar stock de a uno desde el tablero (faltaria campo comentario (dropdown))... falta insertar en Movimientos_stock también cuando doy de alta orden o edito.
+recibo esto de cambiar stock de a uno desde el tablero (faltaria campo comentario (dropdown))... falta insertar en Movimientos_stock también cuando doy de alta orden o editar ya está.
+
 
 location.href="abm?
 op=estado_q&
