@@ -177,8 +177,9 @@ app.get('/abm', async function (req, res) {
 		else if (op == "new_a") { //insert nuevo agente
 
 			try {
-				const value = await lib.asyncDB_insert(clases.Agente.getQueryInsert(agente));
-				agente.id = value.insertId;
+				const value = await lib.insert_blank([clases.Agente.getQueryInsert(agente)]);
+				console.log("objeto de la rta: JSON.stringify(value.obj_rta[0])):  "+JSON.stringify(value.obj_rta[0]));
+				agente.id = value.obj_rta[0].insertId;
 				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok", agente));
 				}
 			catch (error) { res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
@@ -214,8 +215,8 @@ app.get('/abm', async function (req, res) {
 		}
 		else if (op == "update_a") {
 			try {
-				const value = await lib.asyncDB_insert(clases.Agente.getQueryUpdate(agente));
-				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok&op2=data_agente", agente));
+				const value = await lib.insert_blank([clases.Agente.getQueryUpdate(agente)]);
+				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok&op2=data_agente&affected_rows="+value.obj_rta[0].affectedRows, agente));
 				}
 			catch (error) { res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
 		}
@@ -262,24 +263,24 @@ app.get('/abm', async function (req, res) {
 			console.log("detalle que recibo: "+orden.detalle);
 			/*res.send("<html><body><p>falta eliminar detalle orden del orden id e insertar los nuevos</p><p>" + sql + "</p><p>" + sql2 + "</p><p>" + sql3 + "</p><p>" + orden.detalle + "</p><p>" + detalle + "</p><br><br>" + lib_c.get_links_agente("tablero?op=ok", req.session.agente) + "&new_public_id=??</body></html>");*/
 			try {
-				const value = await lib.asyncDB_insert(sql);
-				id_new_orden = value.insertId;
+				const value = await lib.insert_blank([sql]);
+				id_new_orden = value.obj_rta[0].insertId;
 				let detalle = lib_c.splitDetalle(orden.detalle);
-				console.log("sql1: "+sql+"\ndetalle: "+detalle);
+				console.log("sql1: "+sql+"\ndetalle: "+detalle+"\nid_orden: "+id_new_orden);
 				for (let i = 1, prim = true; i < detalle.length; i++) {
 					if (detalle[i] != "0") {
 						if (prim) { prim = false; }
 						else { sql2 += ", "; sql3 += ", "; sql4 += ", "; }
 						sql2 += "(" + id_new_orden + ", " + i + ", " + detalle[i] + ")";
 						sql3 += "(" + i + ", " + detalle[i] + ")";
-						sql4 += "("+req.session.agente.id+", 'A', "+i+", "+detalle[i]+", 'nueva orden')";
+						sql4 += "("+req.session.agente.id+", 'A', "+i+", "+detalle[i]+", 'nueva orden: "+id_new_orden+"')";
 						}
 					}
 				sql3 += " ON DUPLICATE KEY UPDATE reserva =reserva+VALUES(reserva), nombre_variedad=nombre_variedad";
 				console.log("triple insert:\nsql2: "+sql2+"\nsql3: "+sql3+"\nsql4: "+sql4);
 				try {
 					const value = await lib.insert_blank([sql2, sql3, sql4]);
-					console.log("triple insert rtas: "+value);
+					console.log("triple insert rtas: "+value.s_rta);
 					}
 				catch (error) { res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
 
@@ -340,7 +341,7 @@ app.get('/abm', async function (req, res) {
 					if (prim) { prim = false; }
 					else { sql2 += ", "; sql4 += ", ";}
 					sql2 += "(" + orden.id + ", " + i + ", " + detalle[i].sum + ")";
-					sql4 += "("+req.session.agente.id+", 'A', "+detalle[i].id_variedad+", "+detalle[i].cant+", '"+JSON.stringify(detalle[i])+"')";
+					sql4 += "("+req.session.agente.id+", 'A', "+detalle[i].id_variedad+", "+detalle[i].cant+", 'edit orden: "+orden.id+"')";
 					if (detalle[i].reserva0 == "0") { vec_sql3_params.push( "(" + i + ", " + detalle[i].sum + ")" ); }
 					else if (detalle[i].reserva0 == detalle[i].sum) { }
 					else { vec_sql3_params.push( "(" + i + ", " + (parseInt(detalle[i].sum) - detalle[i].reserva0) + ")" ); }
@@ -353,17 +354,8 @@ app.get('/abm', async function (req, res) {
 
 			//**/res.send("<html><body><p>editar orden</p><p>" + sql + "</p><p>sql1: " + sql1 + "</p><p>sql2: " + sql2 + "</p><p>sql3: " + sql3 + "</p><p>vec_detalle: "+detalle+"</p><p>" + orden.detalle + "</p><br><br>" + lib_c.get_links_agente("tablero?op=ok", req.session.agente) + "&new_public_id=??</body></html>");
 			try {
-				const value =await lib.asyncDB_insert2(sql, sql1);
-				console.log("execution sql y sql1: "+value.rta2);
-				try {
-					const value1 = await lib.asyncDB_insert2(sql2, sql3);
-					console.log("execution sql2 y sql3: "+value1.rta1);
-					let value2 = await lib.asyncDB_insert(sql4);
-					console.log("sql4: "+sql4+"\nsql2: "+sql2+"\nreturn: "+ value2);
-					//console.log("new order\nsql: "+sql+"\nsql2: "+sql2+"\nsql3: "+sql3+"\nrta sql2: "+value.rta1+"\n rta sql3: "+value.rta2);
-					}
-				catch (error) { res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
-
+				const value =await lib.insert_blank([sql, sql1, sql2, sql3]);
+				console.log("execution sqls... 1,2,3 y 4: "+value.s_rta);
 				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok", req.session.agente));
 				}
 			catch (error) { res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
@@ -428,14 +420,14 @@ app.get('/abm', async function (req, res) {
 				else if (op3 == "more_r") { sql += "reserva=reserva+"; }
 				else if (op3 == "less_r") { sql += "reserva=reserva-"; alta_baja="B";}
 				sql += orden.k_plantines + " where id_variedad=" + orden.v_plantin
-				sql2 = "insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad) values ("+req.session.agente.id+", '"+alta_baja+"', "+orden.v_plantin+", "+orden.k_plantines+")";
+				sql2 = "insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad, descripcion) values ("+req.session.agente.id+", '"+alta_baja+"', "+orden.v_plantin+", "+orden.k_plantines+", 'modificacion directa de stock')";
 				}
 				
 			
 
 			try {
-				const value = await lib.asyncDB_insert2(sql, sql2);
-				console.log("value\nrta1: "+value.rta1+" ,  "+value.rta2);
+				const value = await lib.insert_blank([sql, sql2]);
+				console.log("value\nrtas 1y2: "+value.s_rta);
 				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok", req.session.agente));
 			} catch (error) {
 				res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>");
@@ -530,8 +522,11 @@ app.get('/tablero', async function (req, res) {
 	
 						"</div> <!--cierro grid_publicaciones de stocks--> </div> <!--cierro grid_publicaciones_offset-->\n" +
 						"<br>\n<br><h2 id='movimientos'>Movimientos stock</h2>" +
-						"<div class='grid_publicaciones_offset'><div class='publicaciones'>"+
-						"<div>mov1</div><div>mov2</div><div>mov3</div><div>mov4</div><div style='border:2px solid chocolate;'><table width='100%'><tr><td>fede</td><td>mahan: 5</td><td>22/01/2025</td></tr></table></div><div style='border:2px solid green;'>mov6</div>"+
+						"<div class='grid_publicaciones_offset'><div class='publicaciones'>";
+					const movs = await lib.pkn_getMovimientos({op:'all'});
+					console.log("recibo de getMovimientos: "+movs);
+					rta+=movs+
+						"<div style='border:2px solid chocolate;'><table width='100%'><tr><td>fede</td><td>mahan: 5</td><td>22/01/2025</td></tr></table></div><div style='border:2px solid green;'>mov6</div>"+
 						"</div> <!--cierro grid_publicaciones de movs--> </div> <!--cierro grid_publicaciones_offset-->\n" +
 						"</div></div> " +
 						"</article>"+

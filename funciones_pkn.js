@@ -2,43 +2,8 @@ const lib_c = require("./consts_pkn");
 const clases = require("./class_ubicaciones");
 
  //.inserts
- async function asyncDB_insert(p_sql) {
-	const conn = await lib_c.get_connection();
-	try {
-		 const res = await conn.query(p_sql);
-		 return res;
-		} 
-	catch (err) {
-		console.log(err);
-		rta="error!"+err;
-		} 
-	finally { if (conn)  await conn.end();  }
-   }
-
-
- async function asyncDB_insert2(p_sql, p_sql2) { //reformular para n queries con n rtas de las affected rows... registrar operacion en tabla Movimientos_stock
-	let sql1=true, sql2=true, rta={rta1:0, rta2:0}, rta1=0, rta2=0;
-	if (p_sql2.length==0) {sql2=false;}
-	if (p_sql.length==0) {sql1=false;}
-
-	const conn = await lib_c.get_connection();
-
-	try {
-		 if (sql1){const res = await conn.query(p_sql); rta1=res.affectedRows;}
-		 if (sql2) {const res2= await conn.query(p_sql2); rta2=res2.affectedRows;} 
-
-		rta= {rta1:rta1, rta2:rta2};
-		}
-	catch (err) {console.log(err);} 
-	finally { 
-		if (conn)  await conn.end();
-		return rta;
-		}
-   }
-
-
    async function insert_blank(vec_param) { 
-	let rta=[], rta2="";
+	let rta=[];
 	const conn = await lib_c.get_connection();
 
 	try {
@@ -47,12 +12,11 @@ const clases = require("./class_ubicaciones");
 			rta[i]={query:vec_param[i], affectedRows:r.affectedRows.toString(), insertId:r.insertId.toString()};
 			//console.log("rta del query: "+Object.keys(rta[i]));
 			}
-		rta2=JSON.stringify(rta)||"error al stringify";
 		}
 	catch (err) {console.log("error en funcion insert_blank\n"+err);} 
 	finally { 
 		if (conn)  await conn.end();
-		return rta2;
+		return {s_rta:JSON.stringify(rta), obj_rta:rta};
 		}
    }   
 
@@ -280,6 +244,25 @@ const clases = require("./class_ubicaciones");
 
 
 
+ async function pkn_getMovimientos(params) {//filtrar y ordenar pkn_getMovimientos({op:'all'})
+	const sql="select * from Movimientos_stock order by fecha limit 33";
+
+	if (params.op=='all') {console.log("op: all");}
+	let conn, rta="";
+	try {
+	   conn=await lib_c.pool.getConnection();
+	   rows = await conn.query(sql);
+	   for (var i in rows) {
+			rta+="<div>"+rows[i].id_agente+", "+rows[i].id_variedad+":"+rows[i].cantidad+", "+rows[i].fecha+", "+rows[i].descripcion+"</div>";
+			}
+	  	} 
+	catch (err) { console.log(err); rta="error!"+err; } 
+	finally { if (conn)  await conn.release(); }
+	console.log("rta de getMovimientos: "+rta);
+	return rta;
+	}
 
 
- module.exports = { asyncDB_getAgentes,  asyncDB_insert,  asyncDB_insert2, insert_blank, pkn_getNogales, pkn_getOrdenes};
+
+
+ module.exports = { asyncDB_getAgentes, insert_blank, pkn_getNogales, pkn_getOrdenes, pkn_getMovimientos};
