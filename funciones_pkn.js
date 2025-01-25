@@ -245,20 +245,21 @@ const clases = require("./class_ubicaciones");
 
 
  async function pkn_getMovimientos(params) {//filtrar y ordenar pkn_getMovimientos({op:'all'})
-	const sql="select * from Movimientos_stock order by fecha limit 33";
+	const sql="select tipo_operacion, DATE_FORMAT(fecha, '%d/%m/%Y') fecha , id_agente , id_variedad , cantidad, descripcion from Movimientos_stock order by fecha limit 99";
 
-	if (params.op=='all') {console.log("op: all");}
+	if (params.op=='all') {const boo=true;}
 	let conn, rta="";
 	try {
 	   conn=await lib_c.pool.getConnection();
 	   rows = await conn.query(sql);
 	   for (var i in rows) {
-			rta+="<div>"+rows[i].id_agente+", "+rows[i].id_variedad+":"+rows[i].cantidad+", "+rows[i].fecha+", "+rows[i].descripcion+"</div>";
+			if (rows[i].tipo_operacion==='A'){ rta+="<div style='border:1px solid green; padding:15px;'> ";}
+			else {rta+="<div style='border:1px solid chocolate; padding:15px;'>";}
+			rta+=rows[i].id_agente+", "+rows[i].id_variedad+":"+rows[i].cantidad+", "+rows[i].fecha+", "+rows[i].descripcion+"</div>\n";
 			}
 	  	} 
 	catch (err) { console.log(err); rta="error!"+err; } 
 	finally { if (conn)  await conn.release(); }
-	console.log("rta de getMovimientos: "+rta);
 	return rta;
 	}
 

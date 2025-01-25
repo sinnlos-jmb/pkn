@@ -98,12 +98,18 @@ app.get('/', async function (req, res) {
 				req.session.logged = true;
 				req.session.agente = value.agente;
 				let temp_functions = "</ul>";
-				if (value.agente.tipo.toLowerCase() == 'a' || value.agente.tipo == 'v') {
+				const adm=(value.agente.tipo.toLowerCase() == 'a' || value.agente.tipo == 'v');
+				console.log("admin? "+adm);
+				if (adm) {
 					temp_functions = app.locals.objs_static.consts.f_admins;
 				}
 				if (value.agente.tipo != 'u') { /*agregaba funcion nueva public*/ }
 				req.session.functions = temp_functions;
-				req.session.nav_bar = "<ul>" + app.locals.objs_static.consts.nav_bar.home + " <li><a href='" + clases.Agente.getLinksAgente("tablero?op=ok", value.agente) + "'>Mi Tablero</a><li> " + temp_functions;
+				req.session.nav_bar = "<ul>" + app.locals.objs_static.consts.nav_bar.home ;
+				//dos nav_bars una con los anchors para admins en mitablero
+				req.session.nav_bar_mi_t=req.session.nav_bar +" <li class='dropdown'><a href='" + clases.Agente.getLinksAgente("tablero?op=ok", value.agente) + "'>Mi Tablero</a> <div class='dropdown-content'>  "+app.locals.objs_static.consts.f_admins_mitablero+"</div> </li> \n " + temp_functions;
+				req.session.nav_bar +=" <li><a href='" + clases.Agente.getLinksAgente("tablero?op=ok", value.agente) + "'>Mi Tablero</a> </li> " + temp_functions; 
+				console.log("nav_bar: "+req.session.nav_bar+"\nnav_bar_mitablero: "+req.session.nav_bar_mi_t);
 				let temp="tablero?op=ok";
 				if (value.agente.tipo=='u'){
 					temp+="&op2=data_agente";
@@ -273,7 +279,7 @@ app.get('/abm', async function (req, res) {
 						else { sql2 += ", "; sql3 += ", "; sql4 += ", "; }
 						sql2 += "(" + id_new_orden + ", " + i + ", " + detalle[i] + ")";
 						sql3 += "(" + i + ", " + detalle[i] + ")";
-						sql4 += "("+req.session.agente.id+", 'A', "+i+", "+detalle[i]+", 'nueva orden: "+id_new_orden+"')";
+						sql4 += "("+req.session.agente.id+", 'B', "+i+", "+detalle[i]+", 'nueva orden: "+id_new_orden+"')";
 						}
 					}
 				sql3 += " ON DUPLICATE KEY UPDATE reserva =reserva+VALUES(reserva), nombre_variedad=nombre_variedad";
@@ -341,7 +347,8 @@ app.get('/abm', async function (req, res) {
 					if (prim) { prim = false; }
 					else { sql2 += ", "; sql4 += ", ";}
 					sql2 += "(" + orden.id + ", " + i + ", " + detalle[i].sum + ")";
-					sql4 += "("+req.session.agente.id+", 'A', "+detalle[i].id_variedad+", "+detalle[i].cant+", 'edit orden: "+orden.id+"')";
+					const A_B= parseInt(detalle[i].cant)>0? 'B':'A';
+					sql4 += "("+req.session.agente.id+", '"+A_B+"', "+detalle[i].id_variedad+", "+detalle[i].cant+", 'edit orden: "+orden.id+"')";
 					if (detalle[i].reserva0 == "0") { vec_sql3_params.push( "(" + i + ", " + detalle[i].sum + ")" ); }
 					else if (detalle[i].reserva0 == detalle[i].sum) { }
 					else { vec_sql3_params.push( "(" + i + ", " + (parseInt(detalle[i].sum) - detalle[i].reserva0) + ")" ); }
@@ -354,7 +361,7 @@ app.get('/abm', async function (req, res) {
 
 			//**/res.send("<html><body><p>editar orden</p><p>" + sql + "</p><p>sql1: " + sql1 + "</p><p>sql2: " + sql2 + "</p><p>sql3: " + sql3 + "</p><p>vec_detalle: "+detalle+"</p><p>" + orden.detalle + "</p><br><br>" + lib_c.get_links_agente("tablero?op=ok", req.session.agente) + "&new_public_id=??</body></html>");
 			try {
-				const value =await lib.insert_blank([sql, sql1, sql2, sql3]);
+				const value =await lib.insert_blank([sql, sql1, sql2, sql3, sql4]);
 				console.log("execution sqls... 1,2,3 y 4: "+value.s_rta);
 				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok", req.session.agente));
 				}
@@ -420,7 +427,8 @@ app.get('/abm', async function (req, res) {
 				else if (op3 == "more_r") { sql += "reserva=reserva+"; }
 				else if (op3 == "less_r") { sql += "reserva=reserva-"; alta_baja="B";}
 				sql += orden.k_plantines + " where id_variedad=" + orden.v_plantin
-				sql2 = "insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad, descripcion) values ("+req.session.agente.id+", '"+alta_baja+"', "+orden.v_plantin+", "+orden.k_plantines+", 'modificacion directa de stock')";
+				sql2 = "insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad, descripcion) "+
+							"values ("+req.session.agente.id+", '"+alta_baja+"', "+orden.v_plantin+", "+orden.k_plantines+", 'modificacion directa.')";
 				}
 				
 			
@@ -494,8 +502,12 @@ app.get('/tablero', async function (req, res) {
 				rta = app.locals.objs_static.consts.head + " </head> \n" +
 					"<body> \n " +
 					app.locals.objs_static.consts.grids_main.header +
-					lib_c.get_logout({ nombre: req.session.agente.nombre, apellido: req.session.agente.apellido }) +
-					req.session.nav_bar + "</div> \n " +
+					lib_c.get_logout({ nombre: req.session.agente.nombre, apellido: req.session.agente.apellido }) ;
+				const adm=(req.session.agente.tipo.toLowerCase() == 'a' || req.session.agente.tipo == 'v');
+				if(adm){rta+=req.session.nav_bar_mi_t;}
+				else{rta+=req.session.nav_bar;}
+				 
+				rta+="</div> \n " +
 
 					"</header><article id='mainArticle'>\n" +//grids_main.article+
 					"<div class='grid_main_public'>\n" +//grids_publics.start+
@@ -524,9 +536,8 @@ app.get('/tablero', async function (req, res) {
 						"<br>\n<br><h2 id='movimientos'>Movimientos stock</h2>" +
 						"<div class='grid_publicaciones_offset'><div class='publicaciones'>";
 					const movs = await lib.pkn_getMovimientos({op:'all'});
-					console.log("recibo de getMovimientos: "+movs);
 					rta+=movs+
-						"<div style='border:2px solid chocolate;'><table width='100%'><tr><td>fede</td><td>mahan: 5</td><td>22/01/2025</td></tr></table></div><div style='border:2px solid green;'>mov6</div>"+
+						"<div class='movs_baja'><table width='100%'><tr><td>fede</td><td>mahan: 5</td><td>22/01/2025</td></tr></table></div><div class='movs_alta'>mov6</div>"+
 						"</div> <!--cierro grid_publicaciones de movs--> </div> <!--cierro grid_publicaciones_offset-->\n" +
 						"</div></div> " +
 						"</article>"+

@@ -258,6 +258,9 @@ body {
     /*cursor: pointer;*/
   }
 
+  .movs_alta {border:2px solid chocolate;} 
+  .movs_baja {border:2px solid green;}
+
 
   .f_login {
     font-size: 16px;

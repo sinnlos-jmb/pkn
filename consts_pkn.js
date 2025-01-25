@@ -125,7 +125,7 @@ function get_form_orden(p_op, orden) {  //new_q o update_q
         "onclick='document.getElementById(\"btn_calc\").click(); let rta=\"\"; ";
     if (p_op == 'new_q') { rta += "for (let j=1, input_j; j<vec_detalles.length; j++) {input_j=document.getElementById(j); if (input_j.value!=\"0\") {rta+=j+\"_\"+input_j.value+\"|\";} } "; }
     else if (p_op == 'update_q') { rta += "for (let j=1, input_j, sum; j<vec_detalles.length; j++) {input_j=document.getElementById(j); if (vec_detalles[j]!=\"0\" || input_j.value!=\"0\") {sum=parseInt(input_j.value)+vec_detalles[j]; rta+=j+\"_\"+sum+\"_\"+vec_detalles[j]+\"_\"+input_j.value+\"|\";} } "; }
-    rta += "document.getElementById(\"detalle\").value=rta; alert (rta);'> </td> \n</tr>\n"+
+    rta += "document.getElementById(\"detalle\").value=rta;'> </td> \n</tr>\n"+
             "</table>\n</form>\n<td class='td_form_cols'> </td>\n</tr>\n"+
             "</table> \n\n";
     return rta;
@@ -175,8 +175,8 @@ async function pkn_engage() {
         post_body = "<header id='pageHeader'><h1>Bienvenidos a PKN gestion!</h1></header><article id='mainArticle'   >",
         nav_bar = { home: "<li><a href='/'>Home</a></li>\n", mitablero: "" },
         pag_error = head + "</head><body><h1>Ha ocurrido un error y estamos trabajando en ello!</h1><br><br><p>",
+        f_admins_mitablero = "<a href='#ordenes_a'>Ordenes abiertas</a> <a href='#ordenes_c'>Ordenes cerradas</a> <a href='#edit_stocks'>Editar stocks</a> <a href='#movimientos'>Movimientos</a>",
         f_admins = "\n\n<li class='dropdown'> <a href='javascript:void(0)' class='dropbtn'>Funciones</a> <div class='dropdown-content'> <a href='abm?op=na'>Nuevo agente</a> " +
-            " <a href='#ordenes_a'>Ordenes abiertas</a> <a href='#ordenes_c'>Ordenes cerradas</a> <a href='#edit_stocks'>Editar stocks</a> <a href='#movimientos'>Movimientos</a> " +
             "  </div>  </li>" +
             "<table class='t_buscador'><tbody> <tr><td class='td_find' style='width:125px'><input type='text' id='busca_agente' class='input_busca'></td> " +
             "<td class='td_find' style='width: 23px;'><a href='javascript:let sa=document.getElementById(\"busca_agente\").value; location=\"/tablero?op=sa&busca_agente=\"+sa+\"\"'> " +
@@ -221,7 +221,7 @@ async function pkn_engage() {
             engaged: true, vec_provincias: vec_provs, vec_deptos: vec_deptos,
             vec_nogales: vec_nogales, opts_provincias: opts_provincias,
             consts: {
-                valor_plantin: valor_plantin, dias_reserva: dias_reserva, head: head, nav_bar: nav_bar, error: pag_error, f_admins: f_admins, post_body: post_body,
+                valor_plantin: valor_plantin, dias_reserva: dias_reserva, head: head, nav_bar: nav_bar, error: pag_error, f_admins: f_admins, f_admins_mitablero: f_admins_mitablero, post_body: post_body,
                 grids_main: grids_main, grids_publics: grids_publics
             }
         };
