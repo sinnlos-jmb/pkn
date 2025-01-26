@@ -99,7 +99,6 @@ app.get('/', async function (req, res) {
 				req.session.agente = value.agente;
 				let temp_functions = "</ul>";
 				const adm=(value.agente.tipo.toLowerCase() == 'a' || value.agente.tipo == 'v');
-				console.log("admin? "+adm);
 				if (adm) {
 					temp_functions = app.locals.objs_static.consts.f_admins;
 				}
@@ -109,7 +108,6 @@ app.get('/', async function (req, res) {
 				//dos nav_bars una con los anchors para admins en mitablero
 				req.session.nav_bar_mi_t=req.session.nav_bar +" <li class='dropdown'><a href='" + clases.Agente.getLinksAgente("tablero?op=ok", value.agente) + "'>Mi Tablero</a> <div class='dropdown-content'>  "+app.locals.objs_static.consts.f_admins_mitablero+"</div> </li> \n " + temp_functions;
 				req.session.nav_bar +=" <li><a href='" + clases.Agente.getLinksAgente("tablero?op=ok", value.agente) + "'>Mi Tablero</a> </li> " + temp_functions; 
-				console.log("nav_bar: "+req.session.nav_bar+"\nnav_bar_mitablero: "+req.session.nav_bar_mi_t);
 				let temp="tablero?op=ok";
 				if (value.agente.tipo=='u'){
 					temp+="&op2=data_agente";
@@ -184,7 +182,7 @@ app.get('/abm', async function (req, res) {
 
 			try {
 				const value = await lib.insert_blank([clases.Agente.getQueryInsert(agente)]);
-				console.log("objeto de la rta: JSON.stringify(value.obj_rta[0])):  "+JSON.stringify(value.obj_rta[0]));
+				//console.log("objeto de la rta: JSON.stringify(value.obj_rta[0])):  "+JSON.stringify(value.obj_rta[0]));
 				agente.id = value.obj_rta[0].insertId;
 				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok", agente));
 				}
@@ -266,13 +264,12 @@ app.get('/abm', async function (req, res) {
 				sql2 = "insert into Detalle_orden (id_orden, id_variedad, cantidad_variedad) values ",
 				sql3 = "INSERT INTO Nogales (id_variedad, reserva) VALUES ", 
 				sql4 = "insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad, descripcion) values ";
-			console.log("detalle que recibo: "+orden.detalle);
+			//console.log("detalle que recibo: "+orden.detalle);
 			/*res.send("<html><body><p>falta eliminar detalle orden del orden id e insertar los nuevos</p><p>" + sql + "</p><p>" + sql2 + "</p><p>" + sql3 + "</p><p>" + orden.detalle + "</p><p>" + detalle + "</p><br><br>" + lib_c.get_links_agente("tablero?op=ok", req.session.agente) + "&new_public_id=??</body></html>");*/
 			try {
 				const value = await lib.insert_blank([sql]);
 				id_new_orden = value.obj_rta[0].insertId;
 				let detalle = lib_c.splitDetalle(orden.detalle);
-				console.log("sql1: "+sql+"\ndetalle: "+detalle+"\nid_orden: "+id_new_orden);
 				for (let i = 1, prim = true; i < detalle.length; i++) {
 					if (detalle[i] != "0") {
 						if (prim) { prim = false; }
@@ -283,10 +280,10 @@ app.get('/abm', async function (req, res) {
 						}
 					}
 				sql3 += " ON DUPLICATE KEY UPDATE reserva =reserva+VALUES(reserva), nombre_variedad=nombre_variedad";
-				console.log("triple insert:\nsql2: "+sql2+"\nsql3: "+sql3+"\nsql4: "+sql4);
+				//console.log("triple insert:\nsql2: "+sql2+"\nsql3: "+sql3+"\nsql4: "+sql4);
 				try {
 					const value = await lib.insert_blank([sql2, sql3, sql4]);
-					console.log("triple insert rtas: "+value.s_rta);
+					//console.log("triple insert rtas: "+value.s_rta);
 					}
 				catch (error) { res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
 
@@ -362,7 +359,7 @@ app.get('/abm', async function (req, res) {
 			//**/res.send("<html><body><p>editar orden</p><p>" + sql + "</p><p>sql1: " + sql1 + "</p><p>sql2: " + sql2 + "</p><p>sql3: " + sql3 + "</p><p>vec_detalle: "+detalle+"</p><p>" + orden.detalle + "</p><br><br>" + lib_c.get_links_agente("tablero?op=ok", req.session.agente) + "&new_public_id=??</body></html>");
 			try {
 				const value =await lib.insert_blank([sql, sql1, sql2, sql3, sql4]);
-				console.log("execution sqls... 1,2,3 y 4: "+value.s_rta);
+				//console.log("execution sqls... 1,2,3 y 4: "+value.s_rta);
 				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok", req.session.agente));
 				}
 			catch (error) { res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
@@ -435,7 +432,7 @@ app.get('/abm', async function (req, res) {
 
 			try {
 				const value = await lib.insert_blank([sql, sql2]);
-				console.log("value\nrtas 1y2: "+value.s_rta);
+				//console.log("value\nrtas 1y2: "+value.s_rta);
 				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok", req.session.agente));
 			} catch (error) {
 				res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>");
@@ -463,7 +460,8 @@ app.get('/tablero', async function (req, res) {
 		res.send(rta);
 	}
 	else if (op == "ok") {
-		let params = { //en parametro op va siempre 'all' x ahora filtrando antes de llamar getOrdenes, tal vez para filtros avanzados cambie, puede ir 'id' si es sobre un agente(con o sin data_agente al principio, y otros valores para filtros)
+		const adm=(req.session.agente.tipo=='a' || req.session.agente.tipo=='v');
+		let params = { 	//en parametro op va siempre 'all' x ahora filtrando antes de llamar getOrdenes, tal vez para filtros avanzados cambie, puede ir 'id' si es sobre un agente(con o sin data_agente al principio, y otros valores para filtros)
 			op: "all", op2:op2, agente: agente, vec_nogales: app.locals.objs_static.vec_nogales, agente_logged:req.session.agente,
 			logged:true, //muestro stocks
 			query: "select  o.id_orden, o.valor_plantin, o.cantidad_plantines, o.valor_orden, o.id_comprador, a.apellido_agente, a.cuit_agente, "+
@@ -473,7 +471,7 @@ app.get('/tablero', async function (req, res) {
 					"if (DATE_ADD(CURDATE() , INTERVAL 5 DAY)>=o.fecha_entrega and CURDATE() <= o.fecha_entrega, true, false) as por_vencer, if (CURDATE() > o.fecha_entrega, true, false) as vencida  " +
 				" from Ordenes o left join Detalle_orden do on  o.id_orden = do.id_orden, Agentes a "+
 				" where a.id_agente=o.id_comprador ", //limit 1000 o filtrar por año de generacion de ordenes para no traer un recordset gigangte
-			semaforo:{data_agente: false, ordenes_vendedor:true, ordenes_comprador:true, grid_stock:true, nueva_orden:false},
+			semaforo:{data_agente: false, ordenes_vendedor:true, ordenes_comprador:true, grid_stock:true, nueva_orden:false, stocks_edit:adm, stock_moves:adm},
 			id_comprador:agente.id, id_vendedor:req.session.agente.id, offsets:p_offsets 
 			};
 		// filtros
@@ -481,17 +479,17 @@ app.get('/tablero', async function (req, res) {
 		if (op2=="data_agente" || req.session.agente.tipo=='u') { //x comprador
 			params.op=op2;
 			params.query+=" and id_comprador =" + agente.id;
-			params.semaforo={data_agente: true, ordenes_vendedor:false, ordenes_comprador:true, grid_stock:false, nueva_orden:(req.session.agente.tipo.toLowerCase()=='a' || req.session.agente.tipo=='v')};
+			params.semaforo={data_agente: true, ordenes_vendedor:false, ordenes_comprador:true, grid_stock:false, nueva_orden:(req.session.agente.tipo.toLowerCase()=='a' || req.session.agente.tipo=='v'), stocks_edit:adm, stock_moves:adm};
 			}
 		else if (op2=="data_vendedor") { //x vendedor (caute que pueden ser otros vendedores: admins y viveristas..)
 			params.op=op2;
 			params.query+=" and id_vendedor =" + agente.id;
-			params.semaforo={data_agente: true, ordenes_vendedor:true, ordenes_comprador:false, grid_stock:true, nueva_orden:false};
+			params.semaforo={data_agente: true, ordenes_vendedor:true, ordenes_comprador:false, grid_stock:true, nueva_orden:false, stocks_edit:adm, stock_moves:adm};
 			}
 		else if (op2=="id_orden") {
 			params.op=op2;
 			params.query+=" and o.id_orden =" + id_orden;
-			params.semaforo={data_agente: false, ordenes_vendedor:false, ordenes_comprador:false, grid_stock:true, nueva_orden:false};
+			params.semaforo={data_agente: false, ordenes_vendedor:false, ordenes_comprador:false, grid_stock:true, nueva_orden:false, stocks_edit:adm, stock_moves:adm};
 			}
 			params.query+=" group by o.id_orden order by o.estado_orden, o.fecha_entrega desc limit 1000";
 		//console.log("nueva_orden ("+req.session.agente.tipo+"): "+params.semaforo.nueva_orden);
@@ -529,16 +527,16 @@ app.get('/tablero', async function (req, res) {
 				try {
 					const value = await lib.pkn_getNogales ({ op: "all", query: "SELECT id_variedad, nombre_variedad, stock, reserva from Nogales", logged:req.session.logged });
 					vec_variedades = value.vec;
+					if (params.semaforo.stocks_edit) {rta += lib_c.get_grid_stocks(vec_variedades) ;}
+						
 	
-					rta += lib_c.get_grid_stocks(vec_variedades) +
-	
-						"</div> <!--cierro grid_publicaciones de stocks--> </div> <!--cierro grid_publicaciones_offset-->\n" +
+					rta+= "</div> <!--cierro grid_publicaciones de stocks--> </div> <!--cierro grid_publicaciones_offset-->\n" +
 						"<br>\n<br><h2 id='movimientos'>Movimientos stock</h2>" +
 						"<div class='grid_publicaciones_offset'><div class='publicaciones'>";
-					const movs = await lib.pkn_getMovimientos({op:'all'});
-					rta+=movs+
-						"<div class='movs_baja'><table width='100%'><tr><td>fede</td><td>mahan: 5</td><td>22/01/2025</td></tr></table></div><div class='movs_alta'>mov6</div>"+
-						"</div> <!--cierro grid_publicaciones de movs--> </div> <!--cierro grid_publicaciones_offset-->\n" +
+					const movs = await lib.pkn_getMovimientos({op:'all', vec_nogales: app.locals.objs_static.vec_nogales});
+					if (params.semaforo.stock_moves){rta+=movs+"<div class='movs_baja'><table width='100%'><tr><td>fede</td><td>mahan: 5</td><td>22/01/2025</td></tr></table></div><div class='movs_alta'>mov6</div>";}
+					
+					rta+= "</div> <!--cierro grid_publicaciones de movs--> </div> <!--cierro grid_publicaciones_offset-->\n" +
 						"</div></div> " +
 						"</article>"+
 						"<nav id='mainNav'>\n " +//grids_main.nav+

@@ -245,7 +245,7 @@ const clases = require("./class_ubicaciones");
 
 
  async function pkn_getMovimientos(params) {//filtrar y ordenar pkn_getMovimientos({op:'all'})
-	const sql="select tipo_operacion, DATE_FORMAT(fecha, '%d/%m/%Y') fecha , id_agente , id_variedad , cantidad, descripcion from Movimientos_stock order by fecha limit 99";
+	const sql="select tipo_operacion, DATE_FORMAT(fecha, '%d/%m/%Y') fecha , id_agente , id_variedad , cantidad, descripcion from Movimientos_stock order by fecha desc limit 99";
 
 	if (params.op=='all') {const boo=true;}
 	let conn, rta="";
@@ -253,9 +253,9 @@ const clases = require("./class_ubicaciones");
 	   conn=await lib_c.pool.getConnection();
 	   rows = await conn.query(sql);
 	   for (var i in rows) {
-			if (rows[i].tipo_operacion==='A'){ rta+="<div style='border:1px solid green; padding:15px;'> ";}
-			else {rta+="<div style='border:1px solid chocolate; padding:15px;'>";}
-			rta+=rows[i].id_agente+", "+rows[i].id_variedad+":"+rows[i].cantidad+", "+rows[i].fecha+", "+rows[i].descripcion+"</div>\n";
+			if (rows[i].tipo_operacion==='A'){ rta+="<div style='border:1px solid green; padding:5px;'> ";}
+			else {rta+="<div style='border:1px solid chocolate; padding:5px;'>";}
+			rta+=clases.Agente.getNomVendedor(rows[i].id_agente)+", "+params.vec_nogales[rows[i].id_variedad]+":"+rows[i].cantidad+", "+rows[i].fecha+", "+rows[i].descripcion+"</div>\n";
 			}
 	  	} 
 	catch (err) { console.log(err); rta="error!"+err; } 
