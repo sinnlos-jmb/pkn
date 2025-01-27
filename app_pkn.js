@@ -366,7 +366,7 @@ app.get('/abm', async function (req, res) {
 
 		}
 		else if (op == "estado_q") {
-			let sql2 = "";
+			let sql2 = "", sql3="", vec_rta=[]; // actualizo tabla movimientos_stock solo al cancelar y reopen, no al cerrar la orden
 			if (op2 == "reactivar") {//reactivar publicacion
 				sql = "update Publicaciones_agente set " +
 					"fecha_publicacion=CURRENT_DATE(), estado_publicacion='1' " +
@@ -383,37 +383,47 @@ app.get('/abm', async function (req, res) {
 						if (prim) { prim = false; }
 						else { sql2 += ", "; }
 						sql2 += "(" + i + ", " + detalle[i] + ")";
+						}
 					}
-				}
 				sql2 += " ON DUPLICATE KEY UPDATE reserva =reserva-VALUES(reserva), stock=stock-values(reserva), nombre_variedad=nombre_variedad";
+
 			}
 			else if (op2 == "x") { //cancel
 				sql = "update Ordenes set estado_orden='X', cierre_vendedor='" + orden.cerrar_vendedor + "', observaciones_orden = CONCAT(observaciones_orden,'\n----\n" + orden.cerrar_observaciones + "')  where id_orden=" + orden.id;
 				sql2 = "INSERT INTO Nogales (id_variedad , reserva) values ";
+				sql3 = "insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad, descripcion) "+
+							"values ";
 
+				console.log("orden.detalle: "+orden.detalle);
 				detalle = lib_c.splitDetalle(orden.detalle);
+				console.log("detalle: "+JSON.stringify(detalle));
 				for (let i = 1, prim = true; i < detalle.length; i++) {
 					if (detalle[i] != "0") {
 						if (prim) { prim = false; }
-						else { sql2 += ", "; }
+						else { sql2 += ", "; sql3+=", ";}
 						sql2 += "(" + i + ", " + detalle[i] + ")";
+						sql3 += "("+req.session.agente.id+", 'A', "+i+", "+detalle[i]+", 'orden cancelada:"+orden.id+"')";
 					}
 				}
 				sql2 += " ON DUPLICATE KEY UPDATE reserva=reserva+VALUES(reserva), nombre_variedad=nombre_variedad";
+				vec_rta.push(sql3);
 			}
-			else if (op2 == "reopen") { //cancel
+			else if (op2 == "reopen") {
 				sql = "update Ordenes set estado_orden='A' where id_orden=" + orden.id;
 				sql2 = "INSERT INTO Nogales (id_variedad , reserva) values ";
-
+				sql3 = "insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad, descripcion) "+
+							"values ";
 				detalle = lib_c.splitDetalle(orden.detalle);
 				for (let i = 1, prim = true; i < detalle.length; i++) {
 					if (detalle[i] != "0") {
 						if (prim) { prim = false; }
-						else { sql2 += ", "; }
+						else { sql2 += ", "; sql3 += ", "; }
 						sql2 += "(" + i + ", " + detalle[i] + ")";
+						sql3 += "("+req.session.agente.id+", 'B', "+i+", "+detalle[i]+", 'orden reabierta:"+orden.id+"')";
 					}
 				}
 				sql2 += " ON DUPLICATE KEY UPDATE reserva=reserva+VALUES(reserva), nombre_variedad=nombre_variedad";
+				vec_rta.push(sql3);
 			}
 
 			else if (op2 == "edit_stock") {
@@ -427,14 +437,16 @@ app.get('/abm', async function (req, res) {
 				sql2 = "insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad, descripcion) "+
 							"values ("+req.session.agente.id+", '"+alta_baja+"', "+orden.v_plantin+", "+orden.k_plantines+", 'modificacion directa.')";
 				}
-				
 			
-
+			vec_rta.push(sql);
+			vec_rta.push(sql2);
+			
 			try {
-				const value = await lib.insert_blank([sql, sql2]);
+				const value = await lib.insert_blank(vec_rta);
 				//console.log("value\nrtas 1y2: "+value.s_rta);
 				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok", req.session.agente));
-			} catch (error) {
+				}
+			catch (error) {
 				res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>");
 				}
 

@@ -1,23 +1,62 @@
 
+. paginacion para movimientos_stock.
+
+. mensajes al lado de la navbar, o abajo para mobile.
+
+. mobile viewport ok?
+
+. repasar y post en vez de get para que no se vean los params.
+
+. nuevo campo observaciones en los agentes (solo accesible a admins)
+.. agregar datos de agente y opcion para permitir al user editar SUS datos...
+
+. reportes - prompt ia con link en el ddown de funciones.
+.. definir qué reportes generar.
+
+. validaciones y confirmaciones
+
+. encriptar pwds
+
+. presupuestador? para proponer brique a clientes (y enviar por wp la propuesta). 
+.. probablemente lo mejor sea crear la orden sin seña cuando hay probabilidad de concretar, y solo presupuestar sin reservar stock en los otros casos.
+
+. lo de los cinco días es cuando se hace presupuesto y cliente no confirma pagando la seña. Agregar ordenes con cinco días de creadas sin seña y ponerla al principio de los admins w-resaltada. Que el admin agregue cinco días o cancele la orden (no conviene automáticamente con un cron: todo lo que se excepcional choca con sistemas sencillos rápidos y baratos).
+
+
 ==
-recibo esto de cambiar stock de a uno desde el tablero (faltaria campo comentario (dropdown))... falta insertar en Movimientos_stock también cuando doy de alta orden o editar ya está.
+todo:
+- agregar nuevas variedades.
+.. dificil xq cambia tamaño de grid, b-hardcodeado...
+
+- ademas de filtros elegir ordenamiento
+. filtros: por cliente (cuit o nombre), vendedor, fecha (mes esp), orden_id.
+.. cambiar orden por fecha entrega, clientes, vendedores, monto total, etc
+.. pop-up para filtrar (todo blur menos pequeño box)
+.. agregar datos en primera card: cant de ordenes abiertas, la más proxima a vencer.
+
+- imagenes de pkn
+
+- mantener diferencia entre reserva y stock?
 
 
-location.href="abm?
-op=estado_q&
-op2=edit_stock&
-v_plantin=2&
-op3=more_s&  //more_s, more_r, less_s, less_r
-k_plantines="+val+"";
+..etapa2
+- visión reducida de ordenes en tabla  (pre-informe pdf?).
+- agenda
+- integrar WP (ia?)
+
+reminder: tipos agente: 'A', 'a', 'v', 'U' o 'u'.
 
 
-..
-editar orden:
-<input type='submit' value='Guardar' class='btn1 s_hov' " +
-        "onclick='document.getElementById(\"btn_calc\").click(); let rta=\"\"; ";
-    if (p_op == 'new_q') { rta += "for (let j=1, input_j; j<vec_detalles.length; j++) {input_j=document.getElementById(j); if (input_j.value!=\"0\") {rta+=j+\"-\"+input_j.value+\"|\";} } "; }
-    else if (p_op == 'update_q') { rta += "for (let j=1, input_j, sum; j<vec_detalles.length; j++) {input_j=document.getElementById(j); if (vec_detalles[j]!=\"0\" || input_j.value!=\"0\") {sum=parseInt(input_j.value)+vec_detalles[j]; rta+=j+\"-\"+sum+\"-\"+vec_detalles[j]+\"|\";} } "; }
-    rta += "document.getElementById(\"detalle\").value=rta;'>
+
+
+
+==
+..Ok. grid de stocks estaba adentro de ordenes cerradas
+..OK. indices a cada funcion en el tablero accesible por anchor en dropdown del tablero para que sea muy single-page app...
+
+
+
+
 
 
 =
@@ -31,8 +70,6 @@ let text = localStorage.getItem("testJSON");
 . docu: seminario II escandel (seminario I steimberg: metodologías)
 
 
-. 
-Ok. grid de stocks estaba adentro de ordenes cerradas
 
 
 mejor py es bot ia en WP, bot terapeuta, bots-compañeros en grupos, etc.
@@ -62,23 +99,7 @@ Be honest about your answers. You may even ask the people closest to you about t
 
 ===
 
-. repasar y post en vez de get para que no se vean los params.
-. nuevo campo observaciones en los agentes (solo accesible a admins)
 
-. indices a cada funcion en el tablero accesible por anchor en dropdown del tablero para que sea muy single-page app...
-. agregar datos de agente y opcion para permitir al user editar SUS datos...podría desaparecer el menu de funciones y quedar solo home (drop down) y tablero.
-
-. Agregar informes con pdfs (mejor con ia).
-
-. validaciones y confirmaciones
-
-. encriptar pwds
-
-
-. lo de los cinco días es cuando se hace presupuesto y cliente no confirma pagando la seña. Agregar ordenes con cinco días de creadas sin seña y ponerla al principio de los admins w-resaltada. Que el admin agregue cinco días o cancele la orden (no conviene automáticamente con un cron: todo lo que se excepcional choca con sistemas sencillos rápidos y baratos).
-
-. presupuestador? para proponer brique a clientes (y enviar por wp la propuesta). 
-.. probablemente lo mejor sea crear la orden sin seña cuando hay probabilidad de concretar, y solo presupuestar sin reservar stock en los otros casos.
 
 
 
@@ -96,26 +117,27 @@ if the expression throws an exception:
 
 
 
-todo:
-- agregar nuevas variedades.
-.. dificil xq cambia tamaño de grid, b-hardcodeado...
 
-. registros de movimientos stock (ordenes y cambios por cancelar, cerrar-ok y modificaciones directas de stock), qué agente hizo cada movimiento.
 
-- ademas de filtros elegir ordenamiento
-. filtros: por cliente (cuit o nombre), vendedor, fecha (mes esp), orden_id.
-.. cambiar orden por fecha entrega, clientes, vendedores, monto total, etc
-.. pop-up para filtrar (todo blur menos pequeño box)
-.. agregar datos en primera card: cant de ordenes abiertas, la más proxima a vencer.
 
-- imagenes de pkn
 
-..etapa2
-- visión reducida de ordenes en tabla  (pre-informe pdf?).
-- agenda
-- integrar WP (ia?)
+==
+tabla movimientos_stock
 
-reminder: tipos agente: 'A', 'a', 'v', 'U' o 'u'.
+location.href="abm?
+op=estado_q&
+op2=edit_stock&
+v_plantin=2&
+op3=more_s&  //more_s, more_r, less_s, less_r
+k_plantines="+val+"";
+
+..
+editar orden:
+<input type='submit' value='Guardar' class='btn1 s_hov' " +
+        "onclick='document.getElementById(\"btn_calc\").click(); let rta=\"\"; ";
+    if (p_op == 'new_q') { rta += "for (let j=1, input_j; j<vec_detalles.length; j++) {input_j=document.getElementById(j); if (input_j.value!=\"0\") {rta+=j+\"-\"+input_j.value+\"|\";} } "; }
+    else if (p_op == 'update_q') { rta += "for (let j=1, input_j, sum; j<vec_detalles.length; j++) {input_j=document.getElementById(j); if (vec_detalles[j]!=\"0\" || input_j.value!=\"0\") {sum=parseInt(input_j.value)+vec_detalles[j]; rta+=j+\"-\"+sum+\"-\"+vec_detalles[j]+\"|\";} } "; }
+    rta += "document.getElementById(\"detalle\").value=rta;'>
 
 
 ==

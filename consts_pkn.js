@@ -34,8 +34,8 @@ const pool = mariadb.createPool({
         for (let i = 0, temp = []; i < detalle.length; i++) {
             temp = detalle[i].split("_");
             if (temp.length > 2) { rta[temp[0]] = { reserva0: temp[2], sum: temp[1], id_variedad:temp[0], cant:temp[3]||0 }; }
-            else { rta[temp[0]] = temp[1]; }
-        }
+            else { rta[temp[0]] = temp[1]; }  //cuando no hay reservas no paso json (habría q revisar)
+            }
         return rta;
         }
 
