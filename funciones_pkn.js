@@ -245,22 +245,24 @@ const clases = require("./class_ubicaciones");
 
 
  async function pkn_getMovimientos(params) {//filtrar y ordenar pkn_getMovimientos({op:'all'})
-	const sql="select tipo_operacion, DATE_FORMAT(fecha, '%d/%m/%Y') fecha , id_agente , id_variedad , cantidad, descripcion from Movimientos_stock order by fecha desc limit 99";
+	const sql="select tipo_operacion, DATE_FORMAT(fecha, '%d/%m/%Y') fecha , id_agente , id_variedad , cantidad, descripcion "+
+				"from Movimientos_stock order by fecha desc limit 53";
 
 	if (params.op=='all') {const boo=true;}
-	let conn, rta="";
+	let conn, rta="", i=0, next=false;
 	try {
 	   conn=await lib_c.pool.getConnection();
 	   rows = await conn.query(sql);
-	   for (var i in rows) {
-			if (rows[i].tipo_operacion==='A'){ rta+="<div style='border:1px solid green; padding:5px;'> ";}
+	   if (rows.length==53) {next=true;}
+	   rows.slice(0, 52).forEach((row) => {
+			if (row.tipo_operacion==='A'){ rta+="<div style='border:1px solid green; padding:5px;'> ";}
 			else {rta+="<div style='border:1px solid chocolate; padding:5px;'>";}
-			rta+=clases.Agente.getNomVendedor(rows[i].id_agente)+", "+params.vec_nogales[rows[i].id_variedad]+":"+rows[i].cantidad+", "+rows[i].fecha+", "+rows[i].descripcion+"</div>\n";
-			}
+			rta+=clases.Agente.getNomVendedor(row.id_agente)+", "+params.vec_nogales[row.id_variedad]+":"+row.cantidad+", "+row.fecha+", "+row.descripcion+"</div>\n";
+			});
 	  	} 
 	catch (err) { console.log(err); rta="error!"+err; } 
 	finally { if (conn)  await conn.release(); }
-	return rta;
+	return {rta_html:rta, next: next};
 	}
 
 

@@ -2,6 +2,7 @@
 . paginacion para movimientos_stock.
 
 . mensajes al lado de la navbar, o abajo para mobile.
+.. validaciones y confirmaciones
 
 . mobile viewport ok?
 
@@ -12,8 +13,6 @@
 
 . reportes - prompt ia con link en el ddown de funciones.
 .. definir qué reportes generar.
-
-. validaciones y confirmaciones
 
 . encriptar pwds
 

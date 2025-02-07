@@ -545,10 +545,14 @@ app.get('/tablero', async function (req, res) {
 					rta+= "</div> <!--cierro grid_publicaciones de stocks--> </div> <!--cierro grid_publicaciones_offset-->\n" +
 						"<br>\n<br><h2 id='movimientos'>Movimientos stock</h2>" +
 						"<div class='grid_publicaciones_offset'><div class='publicaciones'>";
-					const movs = await lib.pkn_getMovimientos({op:'all', vec_nogales: app.locals.objs_static.vec_nogales});
-					if (params.semaforo.stock_moves){rta+=movs+"<div class='movs_baja'><table width='100%'><tr><td>fede</td><td>mahan: 5</td><td>22/01/2025</td></tr></table></div><div class='movs_alta'>mov6</div>";}
-					
-					rta+= "</div> <!--cierro grid_publicaciones de movs--> </div> <!--cierro grid_publicaciones_offset-->\n" +
+					const pag=1; //por defecto param pag está en 1
+					const movs = await lib.pkn_getMovimientos({op:'all', vec_nogales: app.locals.objs_static.vec_nogales, pag:pag});
+					if (params.semaforo.stock_moves){rta+=movs.rta_html+"</div> ";}
+
+					if (pag>1) {rta+="<div id='prev' style='text-align:center;'><--</div>";}
+					if (movs.next) {rta+="<div id='nexxt' style='text-align:center;'>--></div>";}
+
+					rta+= "<!--cierro grid_publicaciones de movs--> </div> <!--cierro grid_publicaciones_offset-->\n" +
 						"</div></div> " +
 						"</article>"+
 						"<nav id='mainNav'>\n " +//grids_main.nav+
