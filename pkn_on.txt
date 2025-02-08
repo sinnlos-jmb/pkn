@@ -1,6 +1,8 @@
 
 . paginacion para movimientos_stock.
 
+. buscar por id_orden
+
 . mensajes al lado de la navbar, o abajo para mobile.
 .. validaciones y confirmaciones
 

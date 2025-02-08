@@ -246,7 +246,7 @@ const clases = require("./class_ubicaciones");
 
  async function pkn_getMovimientos(params) {//filtrar y ordenar pkn_getMovimientos({op:'all'})
 	const sql="select tipo_operacion, DATE_FORMAT(fecha, '%d/%m/%Y') fecha , id_agente , id_variedad , cantidad, descripcion "+
-				"from Movimientos_stock order by fecha desc limit 53";
+				"from Movimientos_stock order by fecha desc limit 53 offset "+params.pag*52;
 
 	if (params.op=='all') {const boo=true;}
 	let conn, rta="", i=0, next=false;
