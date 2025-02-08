@@ -1,7 +1,8 @@
 
-. paginacion para movimientos_stock.
+..Ok. paginacion para movimientos_stock.
+..Ok. orden en movimientos stock no estaba bien, order by date(fecha) desc es correcto.
 
-. buscar por id_orden
+. buscar por id_orden, cuit que detecta guión en tercera posicion
 
 . mensajes al lado de la navbar, o abajo para mobile.
 .. validaciones y confirmaciones

@@ -444,7 +444,7 @@ app.get('/abm', async function (req, res) {
 			try {
 				const value = await lib.insert_blank(vec_rta);
 				//console.log("value\nrtas 1y2: "+value.s_rta);
-				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok", req.session.agente));
+				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok", req.session.agente)+"#edit_stocks");
 				}
 			catch (error) {
 				res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>");
@@ -464,7 +464,7 @@ app.get('/abm', async function (req, res) {
 app.get('/tablero', async function (req, res) {
 	const p_offsets={abiertas:req.query.of_abiertas || '0', cerradas:req.query.of_cerradas || '0', canceladas:req.query.of_canceladas || '0'};
 	const op = req.query.op || '', op2 = req.query.op2 || '', id_orden= req.query.id_orden || '1';
-	const pag_mov = req.query.pag_mov || '0';
+	const pag_mov = req.query.pag_mov || 0;
 	const agente=new clases.Agente (req.query.id_agente || '', req.query.nom_agente || '', req.query.ape_agente || '', req.query.tipo_agente || 'u', req.query.ubicacion || '', req.query.ubic_comp || '', 
 		req.query.cuit_agente || '', req.query.user || '', req.query.nacimiento || '01/01/2001', req.query.domicilio || '', req.query.email || '', req.query.celular || '');
 	let rta = "<!DOCTYPE html><html lang='es'><head>";
@@ -534,7 +534,7 @@ app.get('/tablero', async function (req, res) {
 					}
 				rta +="<h2>Ordenes</h2>"+
 					"</header_flex><div id='publicArticle'>" +
-					value + "<br>\n<br><h2 id='edit_stocks'>Stock</h2>" +
+					value + "<br>\n<br> <h2 id='edit_stocks'>Stock</h2>" +
 					"<div class='grid_publicaciones_offset'><div class='publicaciones'>";
 
 				try {
@@ -549,8 +549,8 @@ app.get('/tablero', async function (req, res) {
 					const movs = await lib.pkn_getMovimientos({op:'all', vec_nogales: app.locals.objs_static.vec_nogales, pag:pag_mov});
 					if (params.semaforo.stock_moves){rta+=movs.rta_html+"</div> ";}
 
-					if (pag_mov>0) {rta+="<div id='prev' style='text-align:center;'><a href='"+clases.Agente.getLinksAgente("tablero?op=ok&pag_mov=0", agente)+"#movimientos'><--</a></div>";}
-					if (movs.next) {rta+="<div id='nexxt' style='text-align:center;'><a href='"+clases.Agente.getLinksAgente("tablero?op=ok&pag_mov=1", agente)+"#movimientos'>--></a></div>";}
+					if (pag_mov>0) { rta+="<div id='prev' style='text-align:center;'><a href='"+clases.Agente.getLinksAgente("tablero?op=ok&pag_mov="+(pag_mov-1), agente)+"#movimientos'><--</a></div>";}
+					if (movs.next) { rta+="<div id='nexxt' style='text-align:center;'><a href='"+clases.Agente.getLinksAgente("tablero?op=ok&pag_mov="+(pag_mov+1), agente)+"#movimientos'>--></a></div>";}
 
 					rta+= "<!--cierro grid_publicaciones de movs--> </div> <!--cierro grid_publicaciones_offset-->\n" +
 						"</div></div> " +

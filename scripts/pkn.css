@@ -27,7 +27,7 @@ body {
      }    
 
   footer, article, nav, stocks {
-    background: #CDDBCD; 
+    background: #EAEAEA; 
     }
   #pageHeader {
     grid-area: header;
@@ -105,7 +105,7 @@ body {
     "stock_main"
     "stock_movs";
     grid-template-rows: 260px 100px;
-    background-color: #cddbcd;
+    background-color: #EAEAEA;
     gap: 3rem;
     padding:8px;
     padding-bottom: 45px;
@@ -571,7 +571,7 @@ body {
 
     header_flex, article2 {
       padding: 0px;
-      background: #CDDBCD;
+      background: #EAEAEA;
       }
 
     }

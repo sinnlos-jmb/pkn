@@ -191,9 +191,9 @@ const clases = require("./class_ubicaciones");
 					first_closed=false;
 					rta+="</div> <div class='offset' id='ordenes_c'>";
 					let temp="";
-					if (offset.abiertas>0) {rta+="<a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_abiertas="+(+offset.abiertas-1), p_params.agente)+"'>anterior</a> - ";}
+					if (offset.abiertas>0) {rta+="<a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_abiertas="+(+offset.abiertas-1), p_params.agente)+"#ordenes_a'>anterior</a> - ";}
 					rta+="offset: "+offset.abiertas;
-					if (offset.abiertas<(Math.floor(+cont_offset/16))) {rta+=" - <a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_abiertas="+(+offset.abiertas+1), p_params.agente)+"'>siguiente</a>";}
+					if (offset.abiertas<(Math.floor(+cont_offset/16))) {rta+=" - <a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_abiertas="+(+offset.abiertas+1), p_params.agente)+"#ordenes_a'>siguiente</a>";}
 	
 					rta+="</div></div><br>Ordenes cerradas: <br> <div class='grid_publicaciones_offset'> <div class='publicaciones'>";
 					//<div class='grid_publicaciones' style='border: 1px solid grey; background: lightgray; border-radius:8px; padding:5px'>";
@@ -215,9 +215,9 @@ const clases = require("./class_ubicaciones");
 					first_canceled=false;
 					rta+="</div> <div class='offset'>";
 					let temp="";
-					if (offset.cerradas>0) {rta+="<a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_cerradas="+(+offset.cerradas-1), p_params.agente)+"'>anterior</a> - ";}
+					if (offset.cerradas>0) {rta+="<a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_cerradas="+(+offset.cerradas-1), p_params.agente)+"#ordenes_c'>anterior</a> - ";}
 					rta+="offset: "+offset.cerradas;
-					if (offset.cerradas<(Math.floor(+cont_offset_closed/16))) {rta+=" - <a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_cerradas="+(+offset.cerradas+1), p_params.agente)+"'>siguiente</a>";}
+					if (offset.cerradas<(Math.floor(+cont_offset_closed/16))) {rta+=" - <a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_cerradas="+(+offset.cerradas+1), p_params.agente)+"#ordenes_c'>siguiente</a>";}
 					rta+="</div><br>Ordenes canceladas: <br> <div class='grid_publicaciones' style='border: 1px solid grey; background: lightgray; border-radius:8px; padding:5px'>";
 					}
 				rta+="<div class='disabled'>"+
@@ -246,7 +246,7 @@ const clases = require("./class_ubicaciones");
 
  async function pkn_getMovimientos(params) {//filtrar y ordenar pkn_getMovimientos({op:'all'})
 	const sql="select tipo_operacion, DATE_FORMAT(fecha, '%d/%m/%Y') fecha , id_agente , id_variedad , cantidad, descripcion "+
-				"from Movimientos_stock order by fecha desc limit 53 offset "+params.pag*52;
+				"from Movimientos_stock order by date(fecha) desc limit 53 offset "+params.pag*52;
 
 	if (params.op=='all') {const boo=true;}
 	let conn, rta="", i=0, next=false;
