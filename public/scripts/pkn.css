@@ -225,12 +225,15 @@ body {
       gap: 10px;
       padding: 8px;
     }
+    .disabled { background-color:beige;}
+    .enabled { background-color: #D5E8D5;}
+    .cancelled { background-color: lightgray;}
+
     .offset {
       text-align: center;
     }
     .publicaciones > div {
       border: 2px solid lightgrey;
-      background: #EDE7F6;
       padding: 1rem;
       border-radius: 10px;
       border: 1px solid grey;
@@ -244,10 +247,9 @@ body {
       padding: 8px;
     }
     .grid_publicaciones > div {
-      border: 2px solid lightgrey;
-      background: #EDE7F6;
+      border: 1px solid grey;
       padding: 1rem;
-      border-radius: 1rem;
+      border-radius: 12px;
     }
   .grid_publicaciones > div:hover {
     border-color:#469346;

@@ -162,9 +162,9 @@ const clases = require("./class_ubicaciones");
 						"<tr><td colspan='2'>vendedor: "+clases.Agente.getNomVendedor(rows[i].id_vendedor)+"</td> </tr>"+
 						"<tr><td colspan='2'>orden: "+rows[i].id_orden;
 				let add_html="";
-				if(rows[i].por_vencer) {rta+="<div><table style='background-color:lavender; border-radius: 8px; border: 1px solid chocolate;'>"+card_fixed;}
-				else if (rows[i].vencida) {rta+="<div><i><table style='background-color:lightgray; border-radius: 8px;'>"+card_fixed+" (V)"; add_html="</i>";}
-				else {rta+="<div><table style='background-color:lavender; border-radius: 8px; border: 1px solid darkseagreen;'>"+card_fixed;}
+				if(rows[i].por_vencer) {rta+="<div class='enabled'><table style='background-color:lavender; border-radius: 8px; border: 1px solid chocolate;'>"+card_fixed;}
+				else if (rows[i].vencida) {rta+="<div class='enabled'><i><table style='background-color:lightgray; border-radius: 8px;'>"+card_fixed+" (V)"; add_html="</i>";}
+				else {rta+="<div class='enabled'><table style='background-color:lavender; border-radius: 8px; border: 1px solid darkseagreen;'>"+card_fixed;}
 				rta+="</td></tr></table>"+add_html+" \n <p id='intra_orden"+i+"'> "+rta_vec_ordenes+
 					"</p>";
 					//"<br><select id='s_detalle' onchange='location.href=this.value' class='select1 s_hov'>"+
@@ -218,9 +218,9 @@ const clases = require("./class_ubicaciones");
 					if (offset.cerradas>0) {rta+="<a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_cerradas="+(+offset.cerradas-1), p_params.agente)+"#ordenes_c'>anterior</a> - ";}
 					rta+="offset: "+offset.cerradas;
 					if (offset.cerradas<(Math.floor(+cont_offset_closed/16))) {rta+=" - <a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_cerradas="+(+offset.cerradas+1), p_params.agente)+"#ordenes_c'>siguiente</a>";}
-					rta+="</div><br>Ordenes canceladas: <br> <div class='grid_publicaciones' style='border: 1px solid grey; background: lightgray; border-radius:8px; padding:5px'>";
+					rta+="</div><br>Ordenes canceladas: <br> <div class='grid_publicaciones'>";
 					}
-				rta+="<div class='disabled'>"+
+				rta+="<div class='cancelled'>"+
 					"<a href='/abm?op=estado_q&op2=reopen&id_orden="+rows[i].id_orden+"&detalle="+detail+
 					"'>Reabrir orden</a> cantidad: "+rows[i].cantidad_plantines+", precio: "+rows[i].valor_plantin+", fecha orden: "+rows[i].fecha_orden+", estado orden: "+rows[i].estado_orden+", seña: "+rows[i].senia;
 				rta+="<br>fecha entrega: "+rows[i].fecha_entrega+"<br>descripcion: "+rows[i].observaciones_orden+
