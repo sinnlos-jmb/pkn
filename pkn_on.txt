@@ -24,6 +24,10 @@
 
 . lo de los cinco días es cuando se hace presupuesto y cliente no confirma pagando la seña. Agregar ordenes con cinco días de creadas sin seña y ponerla al principio de los admins w-resaltada. Que el admin agregue cinco días o cancele la orden (no conviene automáticamente con un cron: todo lo que se excepcional choca con sistemas sencillos rápidos y baratos).
 
+==
+bkg:
+#EAEAEA   vs   #CDDBCD
+
 
 ==
 todo:

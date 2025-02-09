@@ -27,7 +27,7 @@ body {
      }    
 
   footer, article, nav, stocks {
-    background: #CDDBCD; 
+    background: #EAEAEA; 
     }
   #pageHeader {
     grid-area: header;
@@ -44,7 +44,7 @@ body {
     background-size:100% 140px;
     background-position: top;
     background-repeat:no-repeat;
-    border-bottom: 3px solid #cddbcd;
+    border-bottom: 3px solid #EAEAEA;
     }
 
     .banner {
@@ -105,7 +105,7 @@ body {
     "stock_main"
     "stock_movs";
     grid-template-rows: 260px 100px;
-    background-color: #cddbcd;
+    background-color: #EAEAEA;
     gap: 3rem;
     padding:8px;
     padding-bottom: 45px;
@@ -164,7 +164,7 @@ body {
   
     header_flex, article2 {
       padding: 0px;
-      background: rgb(205, 219, 205);
+      background: #EAEAEA;
       }
 
       #publicHeaderFlex {
@@ -257,6 +257,9 @@ body {
     border-color:gray;
     /*cursor: pointer;*/
   }
+
+  .movs_alta {border:2px solid chocolate;} 
+  .movs_baja {border:2px solid green;}
 
 
   .f_login {
@@ -568,7 +571,7 @@ body {
 
     header_flex, article2 {
       padding: 0px;
-      background: #CDDBCD;
+      background: #EAEAEA;
       }
 
     }
