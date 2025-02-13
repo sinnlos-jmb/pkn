@@ -17,6 +17,10 @@ const js_populate = "\n function populating (nro, k) { let dropdown = document.g
     html_form_login = "<div id='f_login' class='f_login'><form action='/'> \n<label for='user'>Usuario:</label><input type='text' id='user' name='user' class='input1 input_m s_hov'>\n <label for='pwd_usuario'>" +
         "Clave:</label> <input type='password' id='pwd_usuario' name='pwd_usuario' class='input1 input_s s_hov'>\n <input type='hidden' name='op' value='login'> \n<input type='submit' value='OK' class='btn1 s_hov' style='width: 40px'></form> </div>\n";
 
+const int_l=new Intl.NumberFormat('es-AR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+    });
 
 const pool = mariadb.createPool({
     host: host_db,
@@ -255,5 +259,5 @@ async function asyncDB_get_vec_deptos(prov) {
 module.exports = {
     port, pool, get_connection, pkn_engage, get_logout, splitDetalle,
     asyncDB_get_vec_deptos, js_populate, js_deptos, html_form_login,
-    get_form_agente, get_form_orden, get_grid_stocks
+    get_form_agente, get_form_orden, get_grid_stocks, int_l
 };

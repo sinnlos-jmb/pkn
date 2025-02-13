@@ -199,12 +199,17 @@ const clases = require("./class_ubicaciones");
 					//<div class='grid_publicaciones' style='border: 1px solid grey; background: lightgray; border-radius:8px; padding:5px'>";
 					}
 				if (cont_offset_closed>=offset.cerradas*16 && cont_offset_closed<(+offset.cerradas+1)*16){
+					
+					let vec_temp=lib_c.splitDetalle(detail), det="";
+					for  (let i=0; i<vec_temp.length; i++) {
+						if (vec_temp[i]!=0) { det+=p_params.vec_nogales[i]+":"+vec_temp[i]+" ";}
+						}
 					rta+="<div class='disabled'>"+
-						"<a href='/abm?op=estado_q&op2=reopen&id_orden="+rows[i].id_orden+"&detalle="+detail+
-						"'>Reabrir orden</a> cantidad: "+rows[i].cantidad_plantines+", precio: "+rows[i].valor_plantin+", fecha orden: "+rows[i].fecha_orden+", estado orden: "+rows[i].estado_orden+", seña: "+rows[i].senia;
-					rta+="<br>fecha entrega: "+rows[i].fecha_entrega+
-						"<br>detalle: "+detail+"<br>cerrada por: "+rows[i].cierre_vendedor+", monto cierre: "+rows[i].cierre_monto+
-						"<br>observaciones: "+rows[i].observaciones_orden+
+						". orden Nº: "+rows[i].id_orden+"<a href='/abm?op=estado_q&op2=reopen&id_orden="+rows[i].id_orden+"&detalle="+detail+
+						"'> (reabrir)</a> valor: "+lib_c.int_l.format(rows[i].cantidad_plantines*rows[i].valor_plantin)+" ("+rows[i].cantidad_plantines+" x $"+rows[i].valor_plantin+"), fecha: "+rows[i].fecha_orden+", seña: "+rows[i].senia;
+					rta+="<br>. entregada: "+rows[i].fecha_entrega+
+						"<br>. detalle: "+det+".<br>. cerrada por: "+clases.Agente.getNomVendedor(rows[i].cierre_vendedor)+", monto cierre: "+rows[i].cierre_monto+
+						"<br>. observaciones: "+rows[i].observaciones_orden+
 						"</div>";
 					}
 				else {}
