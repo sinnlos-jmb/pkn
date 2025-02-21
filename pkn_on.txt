@@ -1,15 +1,22 @@
 
 
 . emprolijar ordenes cerradas.
+..OK. que aparezca nombre del comprador.
+
+. emprolijar filtros de ordenes.
+..OK. en mis ordenes del vendedor deja seguir paginando y agrega otros vendedores).
+
+. viveristas no pueden buscar clientes.
+. clientes no pueden editar sus propios datos.
 
 . buscar por id_orden, cuit que detecta guión en tercera posicion
 
 . mensajes al lado de la navbar, o abajo para mobile.
 .. validaciones y confirmaciones
 
-. mobile viewport ok?
+. mobile viewport ok? (b-ok, probar un poco más)
 
-. repasar y post en vez de get para que no se vean los params.
+. post en vez de get para que no se vean los params.
 
 . nuevo campo observaciones en los agentes (solo accesible a admins)
 .. agregar datos de agente y opcion para permitir al user editar SUS datos...
@@ -32,6 +39,10 @@
 bkg:
 #EAEAEA   vs   #CDDBCD
 
+
+==
+footer:
+&#128366;&phi;&malt;&Xopf;&#127963;&1F589;&#270D;&#2695;&#2696;<br>vec_agentes: JSON.stringify (clases.Agente.vec_vendedores)
 
 ==
 todo:

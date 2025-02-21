@@ -120,7 +120,7 @@ const clases = require("./class_ubicaciones");
   
   // objeto p_params tiene atributos: op y query
   async function pkn_getOrdenes (p_params) { //guardar en variable url hasta &op2= y al click() completar con cerrar o cancelar, después se agregará según el caso cerrar_monto, cerrar_vendedor y cerrar_observaciones
-    let conn, rta=" "+
+    let conn, op2="",rta=" "+
 					//"function prn () {alert(id_orden+',index: '+index+', '+document.getElementById('cerrar_vendedor').value+', '+document.getElementById('cerrar_monto').value);}</script>\n"+
 					"function prn (indice, op2) {let opp2='c', vec_div=document.getElementById('closing'+indice).children; if (op2==1) {opp2='x'; vec_ordenes[indice].cerrar_monto=0; vec_ordenes[indice].cerrar_vendedor="+p_params.agente.id+"; vec_ordenes[indice].cerrar_observaciones=vec_div[1].value;} else {vec_ordenes[indice].cerrar_monto=vec_div[1].value; vec_ordenes[indice].cerrar_vendedor=vec_div[4].value; vec_ordenes[indice].cerrar_observaciones=vec_div[7].value;} let msg='/abm?op=estado_q&op2='+opp2+'&id_orden='+vec_ordenes[indice].id+'&cerrar_monto='+vec_ordenes[indice].cerrar_monto+'&cerrar_vendedor='+vec_ordenes[indice].cerrar_vendedor+'&cerrar_observaciones='+vec_ordenes[indice].cerrar_observaciones+'&detalle='+vec_ordenes[indice].detail; location.href=msg;}\n"+
 					"</script>\n"+
@@ -128,7 +128,7 @@ const clases = require("./class_ubicaciones");
 					"<select id='s_filtros1' onchange='location.href=this.value;' style='border: 2px solid teal; border-radius: 8px;'><option value='"+clases.Agente.getLinksAgente('tablero?op=ok', p_params.agente_logged)+"'";
 	if (p_params.op=='all'){rta+=" selected";}
 	rta+=">mostrar todas las ordenes</option><option value='"+clases.Agente.getLinksAgente('tablero?op=ok&op2=data_vendedor', p_params.agente_logged)+"'";
-	if (p_params.op=='data_vendedor'){rta+=" selected";}
+	if (p_params.op=='data_vendedor'){rta+=" selected"; op2="&op2=data_vendedor";}
 	rta+=">mostrar mis ordenes</option><option value='inminentes'>mostrar las ordenes por vencer</option><option value='mes_actual'>mostrar las ordenes del mes actual</option>";
 	if (p_params.op=='data_agente' || p_params.agente.id!=p_params.agente_logged.id){rta+="<option value='' selected>mostrar las ordenes de un cliente</option>";}
 	if (p_params.op=='id_orden'){rta+="<option value='' selected>mostrar una orden</option>";}
@@ -190,10 +190,10 @@ const clases = require("./class_ubicaciones");
 				if (first_closed) {
 					first_closed=false;
 					rta+="</div> <div class='offset' id='ordenes_c'>";
-					let temp="";
-					if (offset.abiertas>0) {rta+="<a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_abiertas="+(+offset.abiertas-1), p_params.agente)+"#ordenes_a'>anterior</a> - ";}
+					
+					if (offset.abiertas>0) {rta+="<a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+op2+"&of_abiertas="+(+offset.abiertas-1), p_params.agente)+"#ordenes_a'>anterior</a> - ";}
 					rta+="offset: "+offset.abiertas;
-					if (offset.abiertas<(Math.floor(+cont_offset/16))) {rta+=" - <a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_abiertas="+(+offset.abiertas+1), p_params.agente)+"#ordenes_a'>siguiente</a>";}
+					if (offset.abiertas<(Math.floor(+cont_offset/16))) {rta+=" - <a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+op2+"&of_abiertas="+(+offset.abiertas+1), p_params.agente)+"#ordenes_a'>siguiente</a>";}
 	
 					rta+="</div></div><br>Ordenes cerradas: <br> <div class='grid_publicaciones_offset'> <div class='publicaciones'>";
 					//<div class='grid_publicaciones' style='border: 1px solid grey; background: lightgray; border-radius:8px; padding:5px'>";
@@ -205,7 +205,7 @@ const clases = require("./class_ubicaciones");
 						if (vec_temp[i]!=0) { det+=p_params.vec_nogales[i]+":"+vec_temp[i]+" ";}
 						}
 					rta+="<div class='disabled'>"+
-						". orden Nº: "+rows[i].id_orden+"<a href='/abm?op=estado_q&op2=reopen&id_orden="+rows[i].id_orden+"&detalle="+detail+
+						". orden Nº: "+rows[i].id_orden+", "+rows[i].apellido_agente+" <a href='/abm?op=estado_q&op2=reopen&id_orden="+rows[i].id_orden+"&detalle="+detail+
 						"'> (reabrir)</a> valor: "+lib_c.int_l.format(rows[i].cantidad_plantines*rows[i].valor_plantin)+" ("+rows[i].cantidad_plantines+" x $"+rows[i].valor_plantin+"), fecha: "+rows[i].fecha_orden+", seña: "+rows[i].senia;
 					rta+="<br>. entregada: "+rows[i].fecha_entrega+
 						"<br>. detalle: "+det+".<br>. cerrada por: "+clases.Agente.getNomVendedor(rows[i].cierre_vendedor)+", monto cierre: "+rows[i].cierre_monto+
@@ -219,10 +219,9 @@ const clases = require("./class_ubicaciones");
 				if (first_canceled) {
 					first_canceled=false;
 					rta+="</div> <div class='offset'>";
-					let temp="";
-					if (offset.cerradas>0) {rta+="<a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_cerradas="+(+offset.cerradas-1), p_params.agente)+"#ordenes_c'>anterior</a> - ";}
+					if (offset.cerradas>0) {rta+="<a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+op2+"&of_cerradas="+(+offset.cerradas-1), p_params.agente)+"#ordenes_c'>anterior</a> - ";}
 					rta+="offset: "+offset.cerradas;
-					if (offset.cerradas<(Math.floor(+cont_offset_closed/16))) {rta+=" - <a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+temp+"&of_cerradas="+(+offset.cerradas+1), p_params.agente)+"#ordenes_c'>siguiente</a>";}
+					if (offset.cerradas<(Math.floor(+cont_offset_closed/16))) {rta+=" - <a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+op2+"&of_cerradas="+(+offset.cerradas+1), p_params.agente)+"#ordenes_c'>siguiente</a>";}
 					rta+="</div><br>Ordenes canceladas: <br> <div class='grid_publicaciones'>";
 					}
 				rta+="<div class='cancelled'>"+

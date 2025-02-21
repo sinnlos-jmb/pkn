@@ -559,7 +559,7 @@ app.get('/tablero', async function (req, res) {
 						"</nav><div id='stocks'>\n ";//grids_main.stocks+
 	
 					rta += "<div class='stock_main'>" + value.rta + "</div> <div class='stock_movs'> </div>";
-					rta += "</div><footer id='pageFooter'>Footer<br>&#128366;&phi;&malt;&Xopf;&#127963;&1F589;&#270D;&#2695;&#2696;<br>vec_agentes: JSON.stringify (clases.Agente.vec_vendedores)</footer>\n" +//grids_main.footer+
+					rta += "</div><footer id='pageFooter'><br>Footer<br></footer>\n" +//grids_main.footer+
 						" \n </body>\n</html>";
 					res.send(rta);
 					} 
