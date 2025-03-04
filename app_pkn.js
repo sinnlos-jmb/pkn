@@ -468,8 +468,8 @@ app.get('/tablero', async function (req, res) {
 	const agente=new clases.Agente (req.query.id_agente || '', req.query.nom_agente || '', req.query.ape_agente || '', req.query.tipo_agente || 'u', req.query.ubicacion || '', req.query.ubic_comp || '', 
 		req.query.cuit_agente || '', req.query.user || '', req.query.nacimiento || '01/01/2001', req.query.domicilio || '', req.query.email || '', req.query.celular || '');
 	let rta = "<!DOCTYPE html><html lang='es'><head>";
-	if (!req.session.logged || (req.session.agente.id != agente.id && req.session.agente.tipo.toLowerCase() != 'a')) {
-		rta += "\n <meta http-equiv='refresh' content='2; url=/'></head> \n<body><h1>ZONA PROHIBIDA</h1></body></html>";
+	if (!req.session.logged || (req.session.agente.id != agente.id && (req.session.agente.tipo.toLowerCase() != 'a' && req.session.agente.tipo.toLowerCase() != 'v'))) {
+		rta += "\n <meta http-equiv='refresh' content='2; url=/'></head> \n<body><h1>ZONA PROHIBIDA</h1>agente tipo: "+req.session.agente.tipo+"</body></html>";
 		res.send(rta);
 	}
 	else if (op == "ok") {
@@ -493,6 +493,11 @@ app.get('/tablero', async function (req, res) {
 			params.op=op2;
 			params.query+=" and id_comprador =" + agente.id;
 			params.semaforo={data_agente: true, ordenes_vendedor:false, ordenes_comprador:true, grid_stock:false, nueva_orden:(req.session.agente.tipo.toLowerCase()=='a' || req.session.agente.tipo=='v'), stocks_edit:adm, stock_moves:adm};
+			}
+		else if (op2=="mes_actual") {
+			params.op=op2;
+			params.query+=" and MONTH (o.fecha_entrega) = MONTH (curdate()) and YEAR (o.fecha_entrega) = YEAR (curdate()) ";
+			params.semaforo={data_agente: false, ordenes_vendedor:true, ordenes_comprador:false, grid_stock:true, nueva_orden:false, stocks_edit:adm, stock_moves:adm};
 			}
 		else if (op2=="data_vendedor") { //x vendedor (caute que pueden ser otros vendedores: admins y viveristas..)
 			params.op=op2;
@@ -528,7 +533,7 @@ app.get('/tablero', async function (req, res) {
 					rta+="<h2>Datos Personales</h2>\n<br> "+
 						"<table style='width:100%; border:2px solid teal; border-radius: 8px; margin-left:5px;'><tbody>"+
 						"<tr><td style='height:15px;'></td></tr>"+
-						"<tr><td style='width:5%;'></td><td style='background-color: #adff2f7d; display: inline-block;'><div style='padding:5px;'>"+params.agente.nombre+" "+params.agente.apellido+"<button type='button' style='font-size:25px; height:34px; font-size: 25px; vertical-align: sub;' onclick='location.href=\""+clases.Agente.getLinksAgente("abm?op=edit_a", params.agente)+"\"' aria-label='pen'>&#9997;</button></div></td><td>CUIT: "+params.agente.cuit+"</td><td>celular: "+params.agente.celular+"</td><td style='width:5%;'></td></tr>"+
+						"<tr><td style='width:5%;'></td><td style='background-color: #adff2f7d; display: inline-block;'><div style='padding:5px;'>"+params.agente.nombre+" "+params.agente.apellido+" <a href='"+clases.Agente.getLinksAgente("abm?op=edit_a", params.agente)+"'><img src='/images/edit_doc.png' alt='editar agente' style='vertical-align: bottom;'></a></div></td><td>CUIT: "+params.agente.cuit+"</td><td>celular: "+params.agente.celular+"</td><td style='width:5%;'></td></tr>"+
 						"<tr><td></td><td>nacimiento: "+params.agente.nacimiento+"</td><td colspan='2'>domicilio: "+params.agente.domicilio+" ("+params.agente.provincia+")</td><td></td></tr>"+
 						"<tr><td style='height:15px;'></td></tr> \n</tbody></table><br>";
 					}

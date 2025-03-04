@@ -125,11 +125,18 @@ const clases = require("./class_ubicaciones");
 					"function prn (indice, op2) {let opp2='c', vec_div=document.getElementById('closing'+indice).children; if (op2==1) {opp2='x'; vec_ordenes[indice].cerrar_monto=0; vec_ordenes[indice].cerrar_vendedor="+p_params.agente.id+"; vec_ordenes[indice].cerrar_observaciones=vec_div[1].value;} else {vec_ordenes[indice].cerrar_monto=vec_div[1].value; vec_ordenes[indice].cerrar_vendedor=vec_div[4].value; vec_ordenes[indice].cerrar_observaciones=vec_div[7].value;} let msg='/abm?op=estado_q&op2='+opp2+'&id_orden='+vec_ordenes[indice].id+'&cerrar_monto='+vec_ordenes[indice].cerrar_monto+'&cerrar_vendedor='+vec_ordenes[indice].cerrar_vendedor+'&cerrar_observaciones='+vec_ordenes[indice].cerrar_observaciones+'&detalle='+vec_ordenes[indice].detail; location.href=msg;}\n"+
 					"</script>\n"+
 					"<table style='width:100%;' id='ordenes_a'><tbody><tr><td>Ordenes abiertas:</td><td></td><td style='text-align:end;'>"+
-					"<select id='s_filtros1' onchange='location.href=this.value;' style='border: 2px solid teal; border-radius: 8px;'><option value='"+clases.Agente.getLinksAgente('tablero?op=ok', p_params.agente_logged)+"'";
+					"<select id='s_filtros1' onchange='location.href=this.value;' style='border: 2px solid teal; border-radius: 8px;'>"+
+					"<option value='"+clases.Agente.getLinksAgente('tablero?op=ok', p_params.agente_logged)+"'";
 	if (p_params.op=='all'){rta+=" selected";}
-	rta+=">mostrar todas las ordenes</option><option value='"+clases.Agente.getLinksAgente('tablero?op=ok&op2=data_vendedor', p_params.agente_logged)+"'";
+	rta+=">mostrar todas las ordenes</option>"+
+		"<option value='"+clases.Agente.getLinksAgente('tablero?op=ok&op2=data_vendedor', p_params.agente_logged)+"'";
 	if (p_params.op=='data_vendedor'){rta+=" selected"; op2="&op2=data_vendedor";}
-	rta+=">mostrar mis ordenes</option><option value='inminentes'>mostrar las ordenes por vencer</option><option value='mes_actual'>mostrar las ordenes del mes actual</option>";
+
+	rta+=">mostrar mis ordenes</option>"+
+			"<option value='inminentes'>mostrar las ordenes por vencer</option>"+
+			"<option value='"+clases.Agente.getLinksAgente('tablero?op=ok&op2=mes_actual', p_params.agente_logged)+"'";
+	if (p_params.op=='mes_actual'){rta+=" selected"; op2="&op2=mes_actual";}
+	rta+=">ordenes del mes actual</option>";
 	if (p_params.op=='data_agente' || p_params.agente.id!=p_params.agente_logged.id){rta+="<option value='' selected>mostrar las ordenes de un cliente</option>";}
 	if (p_params.op=='id_orden'){rta+="<option value='' selected>mostrar una orden</option>";}
 	
@@ -191,9 +198,10 @@ const clases = require("./class_ubicaciones");
 					first_closed=false;
 					rta+="</div> <div class='offset' id='ordenes_c'>";
 					
-					if (offset.abiertas>0) {rta+="<a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+op2+"&of_abiertas="+(+offset.abiertas-1), p_params.agente)+"#ordenes_a'>anterior</a> - ";}
+					if (offset.abiertas>0) {rta+="<a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+op2+"&of_abiertas="+(+offset.abiertas-1), p_params.agente)+"#ordenes_a'>anterior</a> - "; }
 					rta+="offset: "+offset.abiertas;
-					if (offset.abiertas<(Math.floor(+cont_offset/16))) {rta+=" - <a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+op2+"&of_abiertas="+(+offset.abiertas+1), p_params.agente)+"#ordenes_a'>siguiente</a>";}
+					if (offset.abiertas<(Math.floor(+cont_offset/16))) {
+						rta+=" - <a href='"+clases.Agente.getLinksAgente("tablero?op=ok"+op2+"&of_abiertas="+(+offset.abiertas+1), p_params.agente)+"#ordenes_a'>siguiente</a>";}
 	
 					rta+="</div></div><br>Ordenes cerradas: <br> <div class='grid_publicaciones_offset'> <div class='publicaciones'>";
 					//<div class='grid_publicaciones' style='border: 1px solid grey; background: lightgray; border-radius:8px; padding:5px'>";

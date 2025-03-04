@@ -1,22 +1,25 @@
 
 
 . emprolijar ordenes cerradas.
-..OK. que aparezca nombre del comprador.
+..Ok. que aparezca nombre del comprador.
+..Ok. mobile viewport ok?
 
-. emprolijar filtros de ordenes.
-..OK. en mis ordenes del vendedor deja seguir paginando y agrega otros vendedores).
+. filtros de ordenes en dropdwn (definir filtros y orden).
+..Ok. en mis ordenes del vendedor deja seguir paginando y agrega otros vendedores)
+..Ok. current month
+..Ok. viveristas no pueden buscar clientes.
 
-. viveristas no pueden buscar clientes.
-. clientes no pueden editar sus propios datos.
+
 
 . buscar por id_orden, cuit que detecta guión en tercera posicion
 
 . mensajes al lado de la navbar, o abajo para mobile.
 .. validaciones y confirmaciones
 
-. mobile viewport ok? (b-ok, probar un poco más)
-
 . post en vez de get para que no se vean los params.
+
+. logica para clientes, ahora hay algo nomás.
+.. que puedan editar sus propios datos.
 
 . nuevo campo observaciones en los agentes (solo accesible a admins)
 .. agregar datos de agente y opcion para permitir al user editar SUS datos...
@@ -61,6 +64,7 @@ todo:
 
 
 ..etapa2
+- modulo clientes que puedan comprar o remitirlos a buenos briques.
 - visión reducida de ordenes en tabla  (pre-informe pdf?).
 - agenda
 - integrar WP (ia?)
