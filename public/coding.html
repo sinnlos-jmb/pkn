@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+  <meta name="description" content="Programa que programa">
+  <meta name="keywords" content="HTML, CSS, JavaScript">
+  <meta name="author" content="JMB">
+
+<title>Codificacion JS - Pseudocode</title>
+
+<style>
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  font-size: 17px;
+  margin: 2px 1px;
+  transition-duration: 0.2s;
+  cursor: pointer;
+}
+
+.button1 {
+  background-color: lightgray; 
+  color: black; 
+  border: 2px solid #4CAF50;
+}
+
+.button1:hover {
+  background-color: #4CAF50;
+  color: white;
+}
+
+</style>
+<script type="text/javascript">
+
+var vec_instr=[];
+var vec_data=[];
+var vec_vars=[];
+var vec_types=[];
+var vec_instr_2=[]; 
+
+function eval_coding ()  {
+
+var lines_data =document.getElementById("data").value.split("\n");
+var lines =document.getElementById("coding").value.split("\n");
+var instrucciones="";
+var data="";
+var i;
+var temp_num=0;
+var temp_num2=0;
+var temp_num3=0;
+var temp_1="";
+var temp_type="";
+var temp_nom_var="";
+
+var temp_instr="";
+var temp_pos1="";
+var temp_pos2="";
+var temp_pos3="";
+
+const temp_msg_mostrar = ["", "", "", "", "", "", "", "", "", "", "", "","", "", "","", "", "", "", "", "", "", "", ""];  //24
+const temp_msg_prompt = ["", "", "", "", "", "", "", "", "", "", "", "","", "", "","", "", "", "", "", "", "", "", ""];
+var instrucciones_ok="";
+var data_ok="";
+
+for (i=0;i<lines_data.length; i++) {
+	//document.getElementById("consola").value+="\n"+lines[i];
+	temp_1=lines_data[i].trim();
+	temp_num=temp_1.indexOf(" ");
+	temp_num1=temp_1.indexOf(";");
+	temp_instr="";
+	if (temp_num>=0) {
+			temp_type=temp_1.slice(0, temp_num).trim();
+			temp_nom_var=temp_1.slice(temp_num+1, temp_1.length).trim();
+			}
+	if (temp_type.toUpperCase()=="NUM")
+			data_ok+="var "+temp_nom_var+"=0;";
+	else if (temp_type.toUpperCase()=="CHAR")
+			data_ok+="var "+temp_nom_var+"=\"\";";
+	else  if (temp_type.toUpperCase()=="VEC")
+			data_ok+="var "+temp_nom_var+"=[];";
+			
+}
+var m="";
+let count=0;
+for (i=0;i<lines.length; i++) {
+	temp_1=lines[i].trim();
+
+//anti loopinfinito
+    if (temp_1.toUpperCase().indexOf("WHILE")==0) {
+      temp_1+="if (count++>9999) {alert('loop infinito!'); break;}";
+      }
+	temp_num=temp_1.indexOf("(");
+	temp_instr="";
+	
+	if (temp_num>=0)
+			temp_instr=temp_1.slice(0, temp_num).trim();
+    else if (temp_1.indexOf('//')==0)
+			temp_instr="coment";
+
+	if (temp_instr.toUpperCase()=="MOSTRAR") {
+			temp_num1=temp_1.indexOf(",");
+			temp_pos1=temp_1.slice(temp_num+1, temp_num1).trim();
+
+			if (temp_1.indexOf("\x22")<0) {
+				temp_num2=temp_1.indexOf(")");
+				m=temp_1.slice (temp_num1+1, temp_num2);
+
+				}
+			else {
+				temp_num2=temp_1.indexOf("\x22");
+				temp_num3=temp_1.indexOf("\x22", temp_num2+1);
+				m=temp_1.slice (temp_num2, temp_num3+1);
+				}
+
+			var ii=0;
+			var sigue=true;
+			while (ii<24 && sigue) {
+					if (temp_msg_mostrar[ii]=="")  {
+							instrucciones_ok+="document.getElementById(\"consola\").value+=\x22\\n\x22+temp_msg_mostrar["+ii+"]+"+m+"+"+temp_pos1+";";
+					
+							sigue=false;
+							}
+					ii++;
+					}
+
+			}
+	else if (temp_instr.toUpperCase()=="INGRESAR")  {
+			temp_num1=temp_1.indexOf(",");
+			temp_pos1=temp_1.slice(temp_num+1, temp_num1).trim();
+			
+			temp_num2=temp_1.indexOf("\x22");
+			temp_num3=temp_1.indexOf("\x22", temp_num2+1);
+
+			var ii=0;
+			var sigue=true;
+			var input;
+			while (ii<24 && sigue) {
+					if (temp_msg_prompt[ii]=="")  {
+							temp_msg_prompt[ii]=temp_1.slice(temp_num2+1, temp_num3);
+
+							instrucciones_ok+="var inp0=prompt('"+temp_msg_prompt[ii]+"'); if (isNaN(inp0)) {"+temp_pos1+"=inp0;} else {"+temp_pos1+"=parseInt(inp0);}";
+			
+							sigue=false;
+							}
+					ii++;
+					}
+
+			}
+	else if (temp_instr.toUpperCase()=="ASIGNAR")  {  //asignar (var, var/cte);
+			temp_num1=temp_1.indexOf(",");
+			temp_pos1=temp_1.slice(temp_num+1, temp_num1).trim();
+			
+			temp_num2=temp_1.indexOf(")");
+			temp_pos2=temp_1.slice(temp_num1+1, temp_num2).trim();
+
+			instrucciones_ok+=temp_pos1+"="+temp_pos2+";";			
+			}
+	else if (temp_instr.toUpperCase()=="SUMAR" || temp_instr.toUpperCase()=="CONCATENAR")   {
+			temp_num1=temp_1.indexOf(",");
+			temp_pos1=temp_1.slice(temp_num+1, temp_num1).trim();
+			
+			temp_num2=temp_1.indexOf(",", temp_num1+1);
+			temp_pos2=temp_1.slice(temp_num1+1, temp_num2).trim();
+			
+			temp_num3=temp_1.indexOf(")", temp_num2+1);
+			temp_pos3=temp_1.slice (temp_num2+1, temp_num3).trim();
+
+			instrucciones_ok+=temp_pos1+"="+temp_pos2+"+"+temp_pos3+";";			
+			}
+	else if (temp_instr.toUpperCase()=="RESTAR")  { 
+			temp_num1=temp_1.indexOf(",");
+			temp_pos1=temp_1.slice(temp_num+1, temp_num1).trim();
+			
+			temp_num2=temp_1.indexOf(",", temp_num1+1);
+			temp_pos2=temp_1.slice(temp_num1+1, temp_num2).trim();
+			
+			temp_num3=temp_1.indexOf(")", temp_num2+1);
+			temp_pos3=temp_1.slice (temp_num2+1, temp_num3).trim();
+
+			instrucciones_ok+=temp_pos1+"="+temp_pos2+"-"+temp_pos3+";";			
+			}
+	else if (temp_instr.toUpperCase()=="MULTIPLICAR")  { 
+			temp_num1=temp_1.indexOf(",");
+			temp_pos1=temp_1.slice(temp_num+1, temp_num1).trim();
+			
+			temp_num2=temp_1.indexOf(",", temp_num1+1);
+			temp_pos2=temp_1.slice(temp_num1+1, temp_num2).trim();
+			
+			temp_num3=temp_1.indexOf(")", temp_num2+1);
+			temp_pos3=temp_1.slice (temp_num2+1, temp_num3).trim();
+
+			instrucciones_ok+=temp_pos1+"="+temp_pos2+"*"+temp_pos3+";";			
+			}
+	else if (temp_instr.toUpperCase()=="DIVIDIR")   {
+			temp_num1=temp_1.indexOf(",");
+			temp_pos1=temp_1.slice(temp_num+1, temp_num1).trim();
+			
+			temp_num2=temp_1.indexOf(",", temp_num1+1);
+			temp_pos2=temp_1.slice(temp_num1+1, temp_num2).trim();
+			
+			temp_num3=temp_1.indexOf(")", temp_num2+1);
+			temp_pos3=temp_1.slice (temp_num2+1, temp_num3).trim();
+
+			instrucciones_ok+=temp_pos1+"=Math.floor("+temp_pos2+"/"+temp_pos3+");";			
+			}
+	else if (temp_instr=="coment")  {
+		     //alert('coment found, do nothing');
+			}
+	else {  //ingreso tal cual la instruccion del usuario
+			//alert(temp_instr);
+		    if (temp_1.indexOf('//')>=0)
+					instrucciones_ok+=temp_1.slice (0, temp_1.indexOf('//'));
+		    else
+					instrucciones_ok+=temp_1;
+			}
+	}
+	
+//alert (instrucciones_ok);
+document.getElementById("input_data").value=data_ok;
+document.getElementById("input_instrucciones").value=instrucciones_ok;
+eval (data_ok+instrucciones_ok);
+}
+
+
+	
+</script>
+</head>
+
+<body>
+<h2>Entorno de programacion JS local</h2>
+<br><br>
+
+<table border=1>
+<tr>
+  <td width="888">Visualizar Resultado</td> <td>Codigo</td>
+</tr>
+
+<tr>
+  <td valign="top">
+  <br>  <br>
+
+<textarea id="consola" name="consola" rows="15" cols="60" disabled>
+</textarea><br>
+<button type="button" onClick="getElementById('consola').value=''"; return false;">clear</button>
+  </td>
+
+<td valign=top>
+<br>
+  <form name="fcode" onsubmit="return false;">
+  <input type="hidden" id="input_instrucciones" name="i_instr" value="">
+  <input type="hidden" id="input_data" name="i_data" value="">
+  Datos:<br><textarea id="data" name="data" rows="5" cols="40">num n1&#13;&#10;char msg   </textarea>
+  <br>
+  Instrucciones:<br>
+    <textarea id="coding" name="coding" rows="20" cols="80">asignar (msg, "hola mundo!")&#13;&#10;mostrar (msg, "mensaje a mostrar: ")  </textarea>
+  <br>
+  </td>
+</tr>
+<tr>
+<td style='border:none;'></td>  <!-- style='border-left:none;border-top:none' -->
+<td>
+	<table border="0"><tr><td>
+
+  <button class="button button1" type="button" onClick="eval_coding(); return false;">< R U N ></button>
+					</td>
+					<td width="133">&nbsp;</td>
+					<td>Debugging: </td>
+					<td>
+  <!--button type="button" onClick="alert(document.getElementById('input_instrucciones').value); return false;">ver codigo</button>
+  <button type="button" onClick="alert(document.getElementById('input_data').value); return false;">ver definiciones</button-->
+   <button type="button" onClick="var str=document.getElementById('coding').value; var open=str.split('{').length - 1; var close=str.split('}').length - 1; alert('{: '+open+',   }: '+close); return false;">contar llaves</button> <br>
+  <button type="button" onClick="var str=document.getElementById('coding').value; var open=str.split('&quot;').length - 1; alert('\x22: '+open); return false;">contar comillas</button>
+				</td></tr></table>
+  </form>
+</td>
+</tr>
+
+</table>
+
+<div id=my_msg onclick="document.getElementById('my_msg').innerHTML=' Instrucciones: <br>Asignar (nom_variable, valor)<br>Ingresar (nom_variable, \'mensaje al usuario\')<br>Mostrar (nom_variable, \'mensaje al usuario\')<br>Operaciones Aritmeticas<br>Sumar (var_resultado, nom_variable1, nom_variable2);<br>Restar (var_resultado, nom_variable1, nom_variable2); <br>Dividir (var_resultado, var_dividendo, var_divisor);<br>Multiplicar (var_resultado, var_dividendo, var_divisor);'">Ayuda!</div>
+
+</body>
+</html>

@@ -471,6 +471,7 @@ app.get('/tablero', async function (req, res) {
 	if (!req.session.logged || (req.session.agente.id != agente.id && (req.session.agente.tipo.toLowerCase() != 'a' && req.session.agente.tipo.toLowerCase() != 'v'))) {
 		rta += "\n <meta http-equiv='refresh' content='2; url=/'></head> \n<body><h1>ZONA PROHIBIDA</h1>agente tipo: "+req.session.agente.tipo+"</body></html>";
 		res.send(rta);
+		//parece que da un error en este bloque: referencial: undefined en req.session.agente.tipo o req.qery.tipo_agentee
 	}
 	else if (op == "ok") {
 		const adm=(req.session.agente.tipo=='a' || req.session.agente.tipo=='v');
