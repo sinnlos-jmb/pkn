@@ -465,14 +465,35 @@ app.get('/tablero', async function (req, res) {
 	const p_offsets={abiertas:req.query.of_abiertas || '0', cerradas:req.query.of_cerradas || '0', canceladas:req.query.of_canceladas || '0'};
 	const op = req.query.op || '', op2 = req.query.op2 || '', id_orden= req.query.id_orden || '1';
 	const pag_mov = req.query.pag_mov || 0;
-	const agente=new clases.Agente (req.query.id_agente || '', req.query.nom_agente || '', req.query.ape_agente || '', req.query.tipo_agente || 'u', req.query.ubicacion || '', req.query.ubic_comp || '', 
+	let agente, rta, cond=true;
+	try {
+		agente=new clases.Agente (req.query.id_agente || '', req.query.nom_agente || '', req.query.ape_agente || '', req.query.tipo_agente || 'u', req.query.ubicacion || '', req.query.ubic_comp || '', 
 		req.query.cuit_agente || '', req.query.user || '', req.query.nacimiento || '01/01/2001', req.query.domicilio || '', req.query.email || '', req.query.celular || '');
-	let rta = "<!DOCTYPE html><html lang='es'><head>";
-	if (!req.session.logged || (req.session.agente.id != agente.id && (req.session.agente.tipo.toLowerCase() != 'a' && req.session.agente.tipo.toLowerCase() != 'v'))) {
-		rta += "\n <meta http-equiv='refresh' content='2; url=/'></head> \n<body><h1>ZONA PROHIBIDA</h1>agente tipo: "+req.session.agente.tipo+"</body></html>";
-		res.send(rta);
+		rta = "<!DOCTYPE html><html lang='es'><head>";
+		cond=!req.session.logged || (req.session.agente.id != agente.id && (req.session.agente.tipo.toLowerCase() != 'a' && req.session.agente.tipo.toLowerCase() != 'v'));
+		}
+	catch (er) { 
+		const value = await lib.insert_blank(["insert into Logs (ruta, text) values ('tablero - zona prohibida', '"+er.toString()+"')"]);
+		const temp= value.obj_rta[0];//.affectedRows;
+		console.log("exception detected in /tablero, msg: "+er.toString());
+		}
+	
+	
+	if (cond) {
+	  rta += "\n <meta http-equiv='refresh' content='2; url=/'></head> \n<body><h1>ZONA PROHIBIDA</h1>";
+	  try {
+		rta+="agente tipo: "+req.session.agente.tipo;
 		//parece que da un error en este bloque: referencial: undefined en req.session.agente.tipo o req.qery.tipo_agentee
-	}
+	  	}
+	catch (er) {
+		const value = await lib.insert_blank(["insert into Logs (ruta, text) values ('tablero - zona prohibida II', '"+er.toString().replace(/[^\w\s]/gi, '') +"')"]);
+		const temp= value.obj_rta[0].affectedRows;
+		console.log("exception detected in /tablero, msg: "+er);
+	  }
+	  rta+="</body></html>"
+	  res.send(rta);
+		}
+
 	else if (op == "ok") {
 		const adm=(req.session.agente.tipo=='a' || req.session.agente.tipo=='v');
 		let params = { 	//en parametro op va siempre 'all' x ahora filtrando antes de llamar getOrdenes, tal vez para filtros avanzados cambie, puede ir 'id' si es sobre un agente(con o sin data_agente al principio, y otros valores para filtros)

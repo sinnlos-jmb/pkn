@@ -10,7 +10,7 @@ const clases = require("./class_ubicaciones");
 		for (let i=0; i<vec_param.length; i++){
 			const r=await conn.query(vec_param[i]);
 			rta[i]={query:vec_param[i], affectedRows:r.affectedRows.toString(), insertId:r.insertId.toString()};
-			//console.log("rta del query: "+Object.keys(rta[i]));
+			console.log("rta del query: "+Object.keys(rta[i]));
 			}
 		}
 	catch (err) {console.log("error en funcion insert_blank\n"+err);} 
