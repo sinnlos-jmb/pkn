@@ -94,7 +94,7 @@ app.get('/', async function (req, res) {
 		try {
 			const value = await lib.asyncDB_getAgentes(params);
 
-			if (value.agente.id != null) {// encontró al usuario.
+			if (value.agente != null) {// encontró al usuario.
 				req.session.logged = true;
 				req.session.agente = value.agente;
 				let temp_functions = "</ul>";
@@ -390,7 +390,7 @@ app.get('/abm', async function (req, res) {
 			}
 			else if (op2 == "x") { //cancel
 				sql = "update Ordenes set estado_orden='X', cierre_vendedor='" + orden.cerrar_vendedor + "', observaciones_orden = CONCAT(observaciones_orden,'\n----\n" + orden.cerrar_observaciones + "')  where id_orden=" + orden.id;
-				sql2 = "INSERT INTO Nogales (id_variedad , reserva) values ";
+				sql2 = "INSERT INTO Nogales (id_variedad , stock) values ";
 				sql3 = "insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad, descripcion) "+
 							"values ";
 
@@ -405,12 +405,12 @@ app.get('/abm', async function (req, res) {
 						sql3 += "("+req.session.agente.id+", 'A', "+i+", "+detalle[i]+", 'orden cancelada:"+orden.id+"')";
 					}
 				}
-				sql2 += " ON DUPLICATE KEY UPDATE reserva=reserva+VALUES(reserva), nombre_variedad=nombre_variedad";
+				sql2 += " ON DUPLICATE KEY UPDATE stock=stock+VALUES(stock), nombre_variedad=nombre_variedad";
 				vec_rta.push(sql3);
 			}
 			else if (op2 == "reopen") {
 				sql = "update Ordenes set estado_orden='A' where id_orden=" + orden.id;
-				sql2 = "INSERT INTO Nogales (id_variedad , reserva) values ";
+				sql2 = "INSERT INTO Nogales (id_variedad , stock) values ";
 				sql3 = "insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad, descripcion) "+
 							"values ";
 				detalle = lib_c.splitDetalle(orden.detalle);
@@ -422,7 +422,7 @@ app.get('/abm', async function (req, res) {
 						sql3 += "("+req.session.agente.id+", 'B', "+i+", "+detalle[i]+", 'orden reabierta:"+orden.id+"')";
 					}
 				}
-				sql2 += " ON DUPLICATE KEY UPDATE reserva=reserva+VALUES(reserva), nombre_variedad=nombre_variedad";
+				sql2 += " ON DUPLICATE KEY UPDATE stock=stock-VALUES(stock), nombre_variedad=nombre_variedad";
 				vec_rta.push(sql3);
 			}
 

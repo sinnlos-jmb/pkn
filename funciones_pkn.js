@@ -10,7 +10,7 @@ const clases = require("./class_ubicaciones");
 		for (let i=0; i<vec_param.length; i++){
 			const r=await conn.query(vec_param[i]);
 			rta[i]={query:vec_param[i], affectedRows:r.affectedRows.toString(), insertId:r.insertId.toString()};
-			console.log("rta del query: "+Object.keys(rta[i]));
+			//console.log("rta del query: "+Object.keys(rta[i]));
 			}
 		}
 	catch (err) {console.log("error en funcion insert_blank\n"+err);} 
@@ -31,7 +31,8 @@ const clases = require("./class_ubicaciones");
 		try {
 			conn=await lib_c.pool.getConnection();
 			const rows = await conn.query(p_params.query);
-			for (var i in rows) { //(id, nom, ape, tipo, ubic, prov, cuit, user, nacimiento, domicilio, email, celu)
+			agente=null;
+			for (let i in rows) { //(id, nom, ape, tipo, ubic, prov, cuit, user, nacimiento, domicilio, email, celu)
 				agente=new clases.Agente(rows[i].id_agente, rows[i].nombre_agente, rows[i].apellido_agente, rows[i].tipo_agente, 
 										rows[i].id_ubicacion_agente, clases.Ubicaciones.getUbic(rows[i].id_ubicacion_agente), rows[i].cuit_agente, rows[i].usuario,
 										rows[i].fecha_nacimiento_agente, rows[i].domicilio_agente, rows[i].email_agente, rows[i].celular_agente);
