@@ -656,7 +656,6 @@ app.get('/tablero', async function (req, res) {
 
 
 
-const port2=3060; //vs lib_c.port
-app.listen(port2, function () {
-	console.log('PKN running on port: ' + port2);
+app.listen(lib_c.port, function () {
+	console.log('PKN running on port: ' + lib_c.port);
 });
