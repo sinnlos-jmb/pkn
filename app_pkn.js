@@ -355,7 +355,7 @@ app.get('/abm', async function (req, res) {
 				sql3 += vec_sql3_params.join(", ")+" ON DUPLICATE KEY UPDATE reserva =reserva+VALUES(reserva), nombre_variedad=nombre_variedad";
 				}
 			else { sql1 = ""; sql3 = ""; sql2 = ""; }			
-
+			console.log("queries: "+[sql, sql1, sql2, sql3, sql4]);
 			//**/res.send("<html><body><p>editar orden</p><p>" + sql + "</p><p>sql1: " + sql1 + "</p><p>sql2: " + sql2 + "</p><p>sql3: " + sql3 + "</p><p>vec_detalle: "+detalle+"</p><p>" + orden.detalle + "</p><br><br>" + lib_c.get_links_agente("tablero?op=ok", req.session.agente) + "&new_public_id=??</body></html>");
 			try {
 				const value =await lib.insert_blank([sql, sql1, sql2, sql3, sql4]);
