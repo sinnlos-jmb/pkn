@@ -85,7 +85,7 @@ app.get('/', async function (req, res) {
 
 				//res.set('Cache-Control', 'public, max-age=31557600'); // one year
 				res.send(rta);
-			} 
+			} //res.status(404).send('Sorry, cant find that');
 		catch (error) { res.send(app.locals.objs_static.consts.error + error + "</body></html>"); }
 
 	}
@@ -646,7 +646,7 @@ app.get('/tablero', async function (req, res) {
 
 
 
-
-app.listen(lib_c.port, function () {
-	console.log('PKN running on port: ' + lib_c.port);
+const port2=3060; //vs lib_c.port
+app.listen(port2, function () {
+	console.log('PKN running on port: ' + port2);
 });

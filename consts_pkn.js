@@ -241,15 +241,19 @@ async function asyncDB_get_vec_deptos(prov) {
         for (var i in rows) {
             rta += "[" + rows[i].id_ubicacion + ", \"" + rows[i].nombre_ubicacion + "\"], ";
         }
-        rta += "[]]";
-
+        return rta+"[]]";
     } catch (err) {
         console.log(err);
-        rta = "error!" + err;
+        throw new Error("Failed to fetch deptos data");
     } finally {
-        if (conn) await conn.release();
+        if (conn) {
+            try {
+                await conn.release();
+            } catch (err) {
+                console.error("Error closing connection:", err);
+            }
+        }
     }
-    return rta;
 }
 
 

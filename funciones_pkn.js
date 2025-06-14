@@ -2,9 +2,11 @@ const lib_c = require("./consts_pkn");
 const clases = require("./class_ubicaciones");
 
  //.inserts
+	let conn=null;
+
    async function insert_blank(vec_param) { 
 	let rta=[];
-	const conn = await lib_c.get_connection();
+	conn = await lib_c.get_connection();
 
 	try {
 		for (let i=0; i<vec_param.length; i++){
@@ -12,12 +14,21 @@ const clases = require("./class_ubicaciones");
 			rta[i]={query:vec_param[i], affectedRows:r.affectedRows.toString(), insertId:r.insertId.toString()};
 			//console.log("rta del query: "+Object.keys(rta[i]));
 			}
-		}
-	catch (err) {console.log("error en funcion insert_blank\n"+err);} 
-	finally { 
-		if (conn)  await conn.end();
 		return {s_rta:JSON.stringify(rta), obj_rta:rta};
 		}
+	catch (err) {
+			console.log("error en funcion insert_blank\n"+err);
+			throw new Error("Error en insert_blank");
+			} 
+	finally { 
+		if (conn) {
+            try {
+                await conn.end();
+            } catch (err) {
+                console.error("Error closing connection:", err);
+            }
+        }
+	 }
    }   
 
 
@@ -38,14 +49,21 @@ const clases = require("./class_ubicaciones");
 										rows[i].fecha_nacimiento_agente, rows[i].domicilio_agente, rows[i].email_agente, rows[i].celular_agente);
 				//console.log(agente.ubicacion);
 				}
-			} 
+			return {rta, agente}; //idem rta:rta, agente:agente
+			}
 		catch (err) {
 			console.log(err);
-			rta="error! "+err;
+			throw new Error("Failed to fetch agent data");
 			} 
-		finally {
-			if (conn)  await conn.release();
-			return {rta:rta, agente:agente};
+		finally { 
+			if (conn) {
+				try {
+					await conn.release();
+				} catch (err) {
+					console.error("Error closing connection:", err);
+					throw new Error("Error closing connection");
+				}
+			}
 			}
 		}
 	else if (p_params.op=="sa") {  //search agente 
@@ -68,15 +86,20 @@ const clases = require("./class_ubicaciones");
 				agente.tipo.toLowerCase()=='a'||agente.tipo.toLowerCase()=='v'?op2="data_vendedor":op2="data_agente";
 				rta+="<tr><td>"+agente.id+"</td> <td><a href='"+clases.Agente.getLinksAgente("tablero?op=ok&op2="+op2, agente)+"'>"+ agente.nombre+", "+agente.apellido+"</a></td><td>"+agente.tipo+"</td><td>"+agente.cuit+"</td><td>"+agente.celular+"</td><td><a href='"+clases.Agente.getLinksAgente("abm?op=edit_a", agente)+"'>edit</a></td></tr>";
 				}
-			rta+="\n </table><br>";
+			return rta+"\n </table><br>";
 			} 
 		catch (err) {
 			console.log(err);
-			rta="error!"+err;
+			throw new Error("Failed to fetch agent data");
 			} 
 		finally {
-			if (conn)  await conn.release();
-			return rta;
+			if (conn) {
+				try {
+					await conn.end();
+				} catch (err) {
+					console.error("Error closing connection:", err);
+				}
+			}
 			}
 		}
    }
@@ -93,8 +116,9 @@ const clases = require("./class_ubicaciones");
 	}
  else if (params.op=='all') {
 	sql=params.query;}
- let conn, rta="<div class='title'>Variedades</div>";//<table style='width: 80%; margin-left: 10px; margin-top: 5px; border-collapse: collapse;'><tbody>";
+ let conn=null, rta="<div class='title'>Variedades</div>";//<table style='width: 80%; margin-left: 10px; margin-top: 5px; border-collapse: collapse;'><tbody>";
  //console.log("\n SQL portal: \n"+sql);
+
  try {
 	conn=await lib_c.pool.getConnection();
 	rows = await conn.query(sql);
@@ -111,11 +135,12 @@ const clases = require("./class_ubicaciones");
 				}
 			}
 	rta+="</div>";
+	return {rta, vec:vec_variedades};
+
    } catch (err) {
 	console.log(err);
-	rta="error!"+err;
+	throw new Error("Error en pkn_getNogales");
    } finally { if (conn)  await conn.release(); } //no usar conn.end() porque cierra la conexion en la base... pool.end() sí habría que usar cuando termino la app principal
- return {rta:rta, vec:vec_variedades};
  }
  
   
@@ -244,15 +269,21 @@ const clases = require("./class_ubicaciones");
 			}
 		if (first_closed) {rta+="</div><div class='offset'></div>";}
 		else if (first_canceled) {rta+="</div><div class='offset'></div>";}
-		rta=rta_js+rta+"</div></div>";
+		return rta_js+rta+"</div></div>";
 		} 
 	catch (err) {
 		console.log(err);
-		rta="error!"+err;
+		throw new Error("Failed to fetch orden data");
 		} 
-	finally { if (conn)  await conn.release(); }
-	
-	return rta;
+	finally { 
+		if (conn) {
+			try {
+				await conn.release();
+			} catch (err) {
+				console.error("Error closing connection:", err);
+			}
+		}
+	}
  }
 
 
@@ -262,7 +293,7 @@ const clases = require("./class_ubicaciones");
 				"from Movimientos_stock order by date(fecha) desc limit 53 offset "+params.pag*52;
 
 	if (params.op=='all') {const boo=true;}
-	let conn, rta="", i=0, next=false;
+	let conn=null, rta="", i=0, next=false;
 	try {
 	   conn=await lib_c.pool.getConnection();
 	   rows = await conn.query(sql);
@@ -272,10 +303,20 @@ const clases = require("./class_ubicaciones");
 			else {rta+="<div style='border:1px solid chocolate; padding:5px;'>";}
 			rta+=clases.Agente.getNomVendedor(row.id_agente)+", "+params.vec_nogales[row.id_variedad]+":"+row.cantidad+", "+row.fecha+", "+row.descripcion+"</div>\n";
 			});
-	  	} 
-	catch (err) { console.log(err); rta="error!"+err; } 
-	finally { if (conn)  await conn.release(); }
-	return {rta_html:rta, next: next};
+		return {rta_html:rta, next: next};
+		} 
+	catch (err) { 
+				console.log(err); 
+				throw new Error("Failed to fetch movimientos data"); 
+				} 
+	finally { if (conn) {
+			try {
+				await conn.release();
+			} catch (err) {
+				console.error("Error closing connection:", err);
+			}
+		}
+	}
 	}
 
 
