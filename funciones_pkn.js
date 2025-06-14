@@ -18,7 +18,7 @@ const clases = require("./class_ubicaciones");
 		}
 	catch (err) {
 			console.log("error en funcion insert_blank\n"+err);
-			throw new Error("Error en insert_blank");
+			throw new Error("Error en insert_blank"+vec_param);
 			} 
 	finally { 
 		if (conn) {
@@ -196,7 +196,10 @@ const clases = require("./class_ubicaciones");
 						"<tr><td colspan='2'>orden: "+rows[i].id_orden;
 				let add_html="";
 				if(rows[i].por_vencer) {rta+="<div class='enabled'><table style='background-color:lavender; border-radius: 8px; border: 1px solid chocolate;'>"+card_fixed;}
-				else if (rows[i].vencida) {rta+="<div class='enabled'><i><table style='background-color:lightgray; border-radius: 8px;'>"+card_fixed+" (V)"; add_html="</i>";}
+
+				else if (rows[i].vencida) {rta+="<div class='enabled'><i><table style='background-color:#d3d3d3ab; border-radius: 8px; padding:2px; border: 1px solid silver;'>"+card_fixed+" (V)"; add_html="</i>";}
+
+				//else if (rows[i].vencida) {rta+="<div class='enabled'><i><table style='background-color:lightgray; border-radius: 8px;'>"+card_fixed+" (V)"; add_html="</i>";}
 				else {rta+="<div class='enabled'><table style='background-color:lavender; border-radius: 8px; border: 1px solid darkseagreen;'>"+card_fixed;}
 				rta+="</td></tr></table>"+add_html+" \n <p id='intra_orden"+i+"'> "+rta_vec_ordenes+
 					"</p>";
