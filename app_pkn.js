@@ -337,32 +337,42 @@ app.get('/abm', async function (req, res) {
 			sql2 = "insert into Detalle_orden (id_orden, id_variedad, cantidad_variedad) values ",
 			sql3 = "INSERT INTO Nogales (id_variedad, reserva) VALUES ";
 			let sql4="insert into Movimientos_stock (id_agente, tipo_operacion, id_variedad, cantidad, descripcion) values ";
+			let vec_param=[sql];
 
-			let detalle = lib_c.splitDetalle(orden.detalle), vec_sql3_params=[];
+			let detalle = lib_c.splitDetalle(orden.detalle), vec_sql3_params=[], vec_sql4_params=[];
 			for (let i = 1, prim = true; i < detalle.length; i++) {
 				if (detalle[i] !== "0") {
 					if (prim) { prim = false; }
-					else { sql2 += ", "; sql4 += ", ";}
+					else { sql2 += ", "; }
 					sql2 += "(" + orden.id + ", " + i + ", " + detalle[i].sum + ")";
 					const A_B= parseInt(detalle[i].cant)>0? 'B':'A';
-					sql4 += "("+req.session.agente.id+", '"+A_B+"', "+detalle[i].id_variedad+", "+detalle[i].cant+", 'edit orden: "+orden.id+"')";
-					if (detalle[i].reserva0 == "0") { vec_sql3_params.push( "(" + i + ", " + detalle[i].sum + ")" ); }
-					else if (detalle[i].reserva0 == detalle[i].sum) { }
+					if (detalle[i].cant!="0"){
+						vec_sql4_params.push( "("+req.session.agente.id+", '"+A_B+"', "+detalle[i].id_variedad+", "+detalle[i].cant+", 'edit orden: "+orden.id+"')");
+						}
+					
+					if (detalle[i].reserva0 == "0" ) { vec_sql3_params.push( "(" + i + ", " + detalle[i].sum + ")" ); }
+					else if (detalle[i].reserva0 == detalle[i].sum  ) { }
 					else { vec_sql3_params.push( "(" + i + ", " + (parseInt(detalle[i].sum) - detalle[i].reserva0) + ")" ); }
 				}
 			}
+
 			if (vec_sql3_params.length>0) {
+				sql4+=vec_sql4_params.join(", ");
 				sql3 += vec_sql3_params.join(", ")+" ON DUPLICATE KEY UPDATE reserva =reserva+VALUES(reserva), nombre_variedad=nombre_variedad";
+				vec_param=[sql, sql1, sql2, sql3, sql4];
 				}
-			else { sql1 = ""; sql3 = ""; sql2 = ""; }			
+			//else { sql1 = ""; sql3 = ""; sql2 = ""; }
+			console.log("vec_param: "+vec_param);
 
 			//**/res.send("<html><body><p>editar orden</p><p>" + sql + "</p><p>sql1: " + sql1 + "</p><p>sql2: " + sql2 + "</p><p>sql3: " + sql3 + "</p><p>vec_detalle: "+detalle+"</p><p>" + orden.detalle + "</p><br><br>" + lib_c.get_links_agente("tablero?op=ok", req.session.agente) + "&new_public_id=??</body></html>");
 			try {
-				const value =await lib.insert_blank([sql, sql1, sql2, sql3, sql4]);
+				const value =await lib.insert_blank(vec_param);
 				//console.log("execution sqls... 1,2,3 y 4: "+value.s_rta);
 				res.redirect(clases.Agente.getLinksAgente("tablero?op=ok", req.session.agente));
 				}
-			catch (error) { res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
+			catch (error) {
+						console.log("execution sqls... 1,2,3 y 4: "+[sql, sql1, sql2, sql3, sql4]+"\nvec_param: "+vec_param);
+						res.send(app.locals.objs_static.consts.error + error + "</p>" + app.locals.objs_static.consts.nav_bar.home + "</body></html>"); }
 
 		}
 		else if (op == "estado_q") {
