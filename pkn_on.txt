@@ -1,4 +1,194 @@
 
+==
+cursor
+
+
+1. logging en mysql
+
+
+==
+maintainability
+
+No clear separation of concerns between routes, business logic, and data access
+Lack of proper documentation for functions and routes
+
+2. routes + middleware (auth & validators)
+// Current approach - all routes in one file:
+app.get('/', async function (req, res) { /* ... */ });
+app.get('/abm', async function (req, res) { /* ... */ });
+app.get('/tablero', async function (req, res) { /* ... */ });
+
+// Better approach - separate route files:
+// routes/index.js
+const express = require('express');
+const router = express.Router();
+const auth = require('../middleware/auth');
+const { validateOrder } = require('../middleware/validators');
+
+router.get('/', auth, homeController.index);
+router.get('/abm', auth, abmController.index);
+router.get('/tablero', auth, validateOrder, tableroController.index);
+
+module.exports = router;
+
+
+==
+Performance Issues:
+Multiple database queries that could be combined
+No caching implementation for frequently accessed data
+Large HTML strings being constructed by concatenation
+
+==
+environment:
+
+// Inconsistent environment variable handling:
+const port = process.env.port || 3000;
+const valor_plantin = process.env.valor_plantin; // No fallback
+const dias_reserva = process.env.dias_reserva; // No fallback
+
+// Better approach:
+const config = {
+    port: process.env.PORT || 3000,
+    valor_plantin: process.env.VALOR_PLANTIN || 100,
+    dias_reserva: process.env.DIAS_RESERVA || 30,
+    // Validate required variables
+    validate: function() {
+        const required = ['DB_HOST', 'DB_USER', 'DB_PASSWORD'];
+        const missing = required.filter(key => !process.env[key]);
+        if (missing.length > 0) {
+            throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
+        }
+    }
+};
+
+
+==
+templates para renderizar
+
+// HTML mixed with JavaScript:
+rta += "<div class='stock_main'>" + value.rta + "</div> <div class='stock_movs'> </div>";
+rta += "</div><footer id='pageFooter'>Footer</footer>\n" +//grids_main.footer+
+    " \n </body>\n</html>";
+
+// Better approach using templates:
+res.render('dashboard', {
+    stock: value.rta,
+    movements: movs.rta_html,
+    footer: 'Footer'
+});
+
+
+==
+code quality
+
+// Inconsistent quotes and semicolons:
+const head = "<!DOCTYPE html><html lang='es'>\n<head><title>PKN gestion</title> \n<meta name='description' content='PKN - gestion comercial'>\n <link rel='canonical' href='https://www.briques.com.ar'/> \n<meta name='viewport' content='width=device-width'> <link rel='stylesheet' href='/scripts/pkn.css'> <link rel='icon' type='image/x-icon' href='/images/favicon.ico'> \n  <script src='/scripts/pkn_scripts.js'></script> ";
+
+// Commented out code:
+//console.log("triple insert:\nsql2: "+sql2+"\nsql3: "+sql3+"\nsql4: "+sql4);
+
+
+
+==
+session management
+
+No session timeout configuration
+No session store configuration
+
+// Current minimal session configuration:
+app.use(session({ 
+    secret: "1234", 
+    resave: false, 
+    saveUninitialized: false 
+}));
+
+// Better approach:
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000
+    },
+    store: new RedisStore({
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT
+    })
+}));
+
+
+
+==
+transactions
+
+// Current problematic code:
+try {
+    const value = await lib.insert_blank([sql]);
+    id_new_orden = value.obj_rta[0].insertId;
+    // Multiple separate queries without transaction
+    const value2 = await lib.insert_blank([sql2, sql3, sql4]);
+} catch (error) { 
+    // Error handling
+}
+
+// Better approach with transaction:
+try {
+    const conn = await pool.getConnection();
+    await conn.beginTransaction();
+    try {
+        const result1 = await conn.query(sql);
+        const result2 = await conn.query(sql2);
+        const result3 = await conn.query(sql3);
+        await conn.commit();
+    } catch (err) {
+        await conn.rollback();
+        throw err;
+    } finally {
+        conn.release();
+    }
+} catch (error) {
+    // Error handling
+}
+
+
+==
+code structure
+
+Code Structure Issues:
+Global variable vec_variedades is used across multiple routes without proper scoping
+Duplicate code blocks in multiple places (especially in error handling and HTML generation)
+Long, complex functions that could be broken down into smaller, more manageable pieces
+Inconsistent use of async/await patterns
+
+// Global variable issue:
+let vec_variedades = [];  // (no entiendo, ¿hacerla global?) Used across multiple routes
+
+// Duplicate code blocks:
+// This HTML construction appears multiple times:
+rta = app.locals.objs_static.consts.head + " </head> \n" +
+    "<body> \n " +
+    app.locals.objs_static.consts.grids_main.header + 
+    lib_c.get_logout({ nombre: req.session.agente.nombre, apellido: req.session.agente.apellido }) +
+    req.session.nav_bar + "</div> \n ";
+    
+    
+==
+security
+
+Security Issues:
+The session secret is hardcoded as "1234" which is a major security risk
+SQL queries are constructed by string concatenation which makes the code vulnerable to SQL injection attacks
+No input validation or sanitization for user inputs
+No CSRF protection implemented
+
+// SQL Injection vulnerability: usar ? en values
+const sql = "select * from Agentes where id_agente=" + req.query.id_agente;
+
+
+==
+todo
 
 . emprolijar ordenes cerradas.
 ..Ok. que aparezca nombre del comprador.

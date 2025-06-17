@@ -11,10 +11,43 @@ const port = process.env.port || 3000;
 const valor_plantin = process.env.valor_plantin; //mejor de dbase con otras constantes que pueda editar el admin
 const dias_reserva = process.env.dias_reserva;
 
+let arrays_consts={vec_provs: [], vec_deptos: [],
+            vec_nogales: [], opts_provincias: ""};
+
+   const grids_main = { //funciones: getHeader, getArticle(params)... organizar tipo pipeline
+        header: "<header id='pageHeader'><div class='banner'><table style='table-layout: fixed; width:100%; height:80px;'><tr><td width='2px' height='2px'></td><td width='75px'></td><td></td></tr><tr><td></td>" +
+            "<td class='logo'>PKN</td><td></td></tr><tr><td height='20px'></td><td></td><td></td></tr></table></div> <div class='login' id='ordenes_abiertas'>", //id para anchor
+        article: "</header><article id='mainArticle'>",
+        nav: "</article><nav id='mainNav'>",
+        stocks: "</nav><div id='stocks'> ",
+        footer: "</div><footer id='pageFooter'>Footer</footer>"
+    };
+    const grids_publics = {
+        start: "<div class='grid_main_public'>",
+        post_nav: " <header_flex id='publicHeaderFlex'>",
+        post_filter: "</header_flex><article2 id='publicArticle'><div class='grid_publicaciones'>",
+        end: "\n </div></article2></div>"
+    };
+
+    const head = "<!DOCTYPE html><html lang='es'>\n<head><title>PKN gestion</title> \n<meta name='description' content='PKN - gestion comercial'>\n <link rel='canonical' href='https://www.briques.com.ar'/> \n<meta name='viewport' content='width=device-width'> <link rel='stylesheet' href='/scripts/pkn.css'> <link rel='icon' type='image/x-icon' href='/images/favicon.ico'> \n  <script src='/scripts/pkn_scripts.js'></script> ",
+        post_body = "<header id='pageHeader'><h1>Bienvenidos a PKN gestion!</h1></header><article id='mainArticle'   >",
+        nav_bar = { home: "<li><a href='/'>Home</a></li>\n", mitablero: "" },
+        pag_error = head + "</head><body><h1>Ha ocurrido un error y estamos trabajando en ello!</h1><br><br><p>",
+        f_admins_mitablero = "<a href='#ordenes_a'>Ordenes abiertas</a> <a href='#ordenes_c'>Ordenes cerradas</a> <a href='#edit_stocks'>Editar stocks</a> <a href='#movimientos'>Movimientos</a>",
+        f_admins = "\n\n<li class='dropdown'> <a href='javascript:void(0)' class='dropbtn'>Funciones</a> <div class='dropdown-content'> <a href='/abm?op=na'>Nuevo agente</a> " +
+            "  </div>  </li>" +
+            "<table class='t_buscador'><tbody> <tr><td class='td_find' style='width:125px'><input type='text' id='busca_agente' class='input_busca'></td> " +
+            "<td class='td_find' style='width: 23px;'><a href='javascript:let sa=document.getElementById(\"busca_agente\").value; location=\"tablero?op=sa&busca_agente=\"+sa+\"\"'> " +
+            "<svg width='20px' height='20px' viewBox='0 0 24 24' style='vertical-align:top;'><path d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'></path></svg></a>" +
+            "</td></tr></tbody></table></ul> ";
+    const consts={
+                valor_plantin: valor_plantin, dias_reserva: dias_reserva, head: head, nav_bar: nav_bar, error: pag_error, f_admins: f_admins, f_admins_mitablero: f_admins_mitablero, post_body: post_body,
+                grids_main: grids_main, grids_publics: grids_publics, engaged:true };
+
 const js_populate = "\n function populating (nro, k) { let dropdown = document.getElementById('select'+k); dropdown.length =0; if (dropdown.size<2) {dropdown[0] = new Option('Seleccionar categoria', 0);} \n for (let i = 0; i < vec_categs.length; i++) { " +
     "if (Object.values(vec_categs[i])[k]==nro && Object.values(vec_categs[i])[k+1]==null) { dropdown[dropdown.length] = new Option(vec_categs[i].nombre_categoria, vec_categs[i].id);	} } for (let i=k+1; i<6;i++){ document.getElementById('select'+i).length=0; } };",
     js_deptos = "\n function fill_deptos (id_prov, include_all) { const dd_deptos=document.getElementById('ubicacion'); dd_deptos.length=0;  if (include_all) {dd_deptos[0] = new Option('--Todas--', 0);} 	for (let i=1; i<vec_deptos_ok.length;i++) { if (vec_deptos_ok[i].prov==id_prov) { dd_deptos[dd_deptos.length] = new Option(vec_deptos_ok[i].nom, i);} } } \n",
-    html_form_login = "<div id='f_login' class='f_login'><form action='/'> \n<label for='user'>Usuario:</label><input type='text' id='user' name='user' class='input1 input_m s_hov'>\n <label for='pwd_usuario'>" +
+    html_form_login = "<div id='f_login' class='f_login'><form action='/api/login' method='POST'> \n<label for='user'>Usuario:</label><input type='text' id='user' name='user' class='input1 input_m s_hov'>\n <label for='pwd_usuario'>" +
         "Clave:</label> <input type='password' id='pwd_usuario' name='pwd_usuario' class='input1 input_s s_hov'>\n <input type='hidden' name='op' value='login'> \n<input type='submit' value='OK' class='btn1 s_hov' style='width: 40px'></form> </div>\n";
 
 const int_l=new Intl.NumberFormat('es-AR', {
@@ -160,46 +193,20 @@ function get_connection() {
 
 //.engage (on_app_start, devuelve objeto con las consts de la app que almaceno en app.locals, siempre accesible)
 async function pkn_engage() {
-    const grids_main = { //funciones: getHeader, getArticle(params)... organizar tipo pipeline
-        header: "<header id='pageHeader'><div class='banner'><table style='table-layout: fixed; width:100%; height:80px;'><tr><td width='2px' height='2px'></td><td width='75px'></td><td></td></tr><tr><td></td>" +
-            "<td class='logo'>PKN</td><td></td></tr><tr><td height='20px'></td><td></td><td></td></tr></table></div> <div class='login' id='ordenes_abiertas'>", //id para anchor
-        article: "</header><article id='mainArticle'>",
-        nav: "</article><nav id='mainNav'>",
-        stocks: "</nav><div id='stocks'> ",
-        footer: "</div><footer id='pageFooter'>Footer</footer>"
-    };
-    const grids_publics = {
-        start: "<div class='grid_main_public'>",
-        post_nav: " <header_flex id='publicHeaderFlex'>",
-        post_filter: "</header_flex><article2 id='publicArticle'><div class='grid_publicaciones'>",
-        end: "\n </div></article2></div>"
-    };
-
-    const head = "<!DOCTYPE html><html lang='es'>\n<head><title>PKN gestion</title> \n<meta name='description' content='PKN - gestion comercial'>\n <link rel='canonical' href='https://www.briques.com.ar'/> \n<meta name='viewport' content='width=device-width'> <link rel='stylesheet' href='/scripts/pkn.css'> <link rel='icon' type='image/x-icon' href='/images/favicon.ico'> \n  <script src='/scripts/pkn_scripts.js'></script> ",
-        post_body = "<header id='pageHeader'><h1>Bienvenidos a PKN gestion!</h1></header><article id='mainArticle'   >",
-        nav_bar = { home: "<li><a href='/'>Home</a></li>\n", mitablero: "" },
-        pag_error = head + "</head><body><h1>Ha ocurrido un error y estamos trabajando en ello!</h1><br><br><p>",
-        f_admins_mitablero = "<a href='#ordenes_a'>Ordenes abiertas</a> <a href='#ordenes_c'>Ordenes cerradas</a> <a href='#edit_stocks'>Editar stocks</a> <a href='#movimientos'>Movimientos</a>",
-        f_admins = "\n\n<li class='dropdown'> <a href='javascript:void(0)' class='dropbtn'>Funciones</a> <div class='dropdown-content'> <a href='abm?op=na'>Nuevo agente</a> " +
-            "  </div>  </li>" +
-            "<table class='t_buscador'><tbody> <tr><td class='td_find' style='width:125px'><input type='text' id='busca_agente' class='input_busca'></td> " +
-            "<td class='td_find' style='width: 23px;'><a href='javascript:let sa=document.getElementById(\"busca_agente\").value; location=\"/tablero?op=sa&busca_agente=\"+sa+\"\"'> " +
-            "<svg width='20px' height='20px' viewBox='0 0 24 24' style='vertical-align:top;'><path d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'></path></svg></a>" +
-            "</td></tr></tbody></table></ul> ";
-    let rta = "", opts_provincias = "<option value='0'>Seleccionar</option>";
-    let vec_provs = [], vec_agentes = [], vec_nogales = [], vec_deptos = [];
+    arrays_consts.opts_provincias = "<option value='0'>Seleccionar</option>";
+    let vec_agentes = [];
     try {
         conn = await pool.getConnection();
         let rows = await conn.query("select nombre_provincia, id_provincia from Provincias");
         for (var i in rows) {
-            vec_provs[rows[i].id_provincia] = rows[i].nombre_provincia;
-            opts_provincias += "<option value='" + rows[i].id_provincia + "'>" + rows[i].nombre_provincia + "</option> ";
+            arrays_consts.vec_provs[rows[i].id_provincia] = rows[i].nombre_provincia;
+            arrays_consts.opts_provincias += "<option value='" + rows[i].id_provincia + "'>" + rows[i].nombre_provincia + "</option> ";
         }
 
         rows = await conn.query("select id_variedad, nombre_variedad from Nogales");
         let j = 0;
         for (var i in rows) {
-            vec_nogales[rows[i].id_variedad] = rows[i].nombre_variedad;
+            arrays_consts.vec_nogales[rows[i].id_variedad] = rows[i].nombre_variedad;
         }
 
         rows = await conn.query("select id_provincia, nombre_ubicacion from Ubicaciones ");
@@ -214,20 +221,18 @@ async function pkn_engage() {
             vec_agentes[vec_agentes.length] = {id: rows[i].id_agente, nombre: rows[i].nombre_agente, apellido:rows[i].apellido_agente, tipo: rows[i].tipo_agente, nom_user:rows[i].usuario };
             }
         clases.Agente.vec_vendedores=vec_agentes;
-        console.log("app engaged!");
+        console.log("app engaged");
     }
     catch (err) {
         console.log(err);
     }
     finally {
+        arrays_consts= {vec_provincias: arrays_consts.vec_provs, vec_deptos: arrays_consts.vec_deptos,
+            vec_nogales: arrays_consts.vec_nogales, opts_provincias: arrays_consts.opts_provincias};
         if (conn) await conn.release();
         return {
-            engaged: true, vec_provincias: vec_provs, vec_deptos: vec_deptos,
-            vec_nogales: vec_nogales, opts_provincias: opts_provincias,
-            consts: {
-                valor_plantin: valor_plantin, dias_reserva: dias_reserva, head: head, nav_bar: nav_bar, error: pag_error, f_admins: f_admins, f_admins_mitablero: f_admins_mitablero, post_body: post_body,
-                grids_main: grids_main, grids_publics: grids_publics
-            }
+            engaged: true, 
+            consts: consts
         };
     }
 }
@@ -263,5 +268,5 @@ async function asyncDB_get_vec_deptos(prov) {
 module.exports = {
     port, pool, get_connection, pkn_engage, get_logout, splitDetalle,
     asyncDB_get_vec_deptos, js_populate, js_deptos, html_form_login,
-    get_form_agente, get_form_orden, get_grid_stocks, int_l
+    get_form_agente, get_form_orden, get_grid_stocks, int_l,  consts, arrays_consts
 };
