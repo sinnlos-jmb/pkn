@@ -32,6 +32,8 @@ router.get('/tablero', auth, validateOrder, tableroController.index);
 module.exports = router;
 
 
+º
+
 ==
 Performance Issues:
 Multiple database queries that could be combined

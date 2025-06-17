@@ -60,7 +60,12 @@ const pool = mariadb.createPool({
     user: user_db,
     password: pwd_db,
     database: dbase,
-    connectionLimit: pool_size
+    connectionLimit: pool_size,
+    socketTimeout: 60000,       // pruebas por error en log de cerrar unexpected
+    keepAliveDelay: 30000,    // Enviar señal keepalive cada 30 segundos    
+    idleTimeout: 90000,      // Cerrar conexiones inactivas (ms)
+    acquireTimeout: 30000,   // Tiempo máximo para obtener conexión
+    reconnect: true          // Reconectar automáticamente
 });
 
 

@@ -29,14 +29,13 @@ router.post('/login', [
   handleValidation
 ], async function (req, res)  {
 const pwd=req.body.pwd_usuario || '', user=req.body.user || '';
-console.log("login: "+pwd+":"+user);
 //console.log("consts: "+JSON.stringify(lib_c.consts));
 const params = { op: 'login', query: clases.Agente.getQueryLogin(user, pwd) , logged:false}
         try {
             const value = await lib.asyncDB_getAgentes(params);
 
             if (value.agente != null) {// encontró al usuario.
-                console.log("econtrado!!");
+                //xconsole.log("econtrado!!");
                 req.session.logged = true;
                 req.session.agente = value.agente;
                 let temp_functions = "</ul>";

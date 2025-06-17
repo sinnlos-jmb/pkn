@@ -1,13 +1,10 @@
 const express = require('express');
 require('dotenv').config()
 const session = require("express-session");
-const fs = require('fs');
-const https = require('https');
 
 const lib = require("./funciones_pkn");
 const lib_c = require("./consts_pkn");
 const clases = require("./class_ubicaciones");
-const { request } = require('http');
 
 const authRoutes = require('./routes/auth');
 const tableroRoute = require('./routes/tablero');
@@ -99,14 +96,13 @@ app.get('/', async function (req, res) {
 		catch (error) { res.send(lib_c.consts.error + error + "</body></html>"); }
 
 	}
-	else if (params.op == 'login') {}
-
 	else if (params.op == 'logout') {
 		req.session.logged = false;
 		req.session.nav_bar = "";
 		req.session.agente = null;
 		res.redirect("/");
 	}
+	else if (params.op == 'login') {}
 },);
 
 
