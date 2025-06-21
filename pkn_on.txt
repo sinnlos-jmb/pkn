@@ -192,7 +192,7 @@ const sql = "select * from Agentes where id_agente=" + req.query.id_agente;
 ==
 todo
 
-. emprolijar ordenes cerradas.
+. emprolijar ordenes cerradas y canceladas.
 ..Ok. que aparezca nombre del comprador.
 ..Ok. mobile viewport ok?
 

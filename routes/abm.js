@@ -14,7 +14,6 @@ router.get('/', async function (req, res) {
 	if (req.session.logged && lib_c.consts.engaged) {
 		let sql = "", sql1 = "", sql2 = "", sql3 = "";
 		const op = req.query.op || '*', op2 = req.query.op2 || '*', op3 = req.query.op3 || '*';
-        console.log("op: "+op);
 
 		const orden = {
 			id: req.query.id_orden || '', agente: req.session.agente || '', k_plantines: req.query.k_plantines || '', v_plantin: req.query.v_plantin || '', v_total: req.query.v_total || '', cuit_comprador: req.query.cuit_agente || '', id_comprador: req.query.id_comprador || '', apellido_comprador: req.query.ape_agente || '',
